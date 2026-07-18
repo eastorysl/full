@@ -1,0 +1,39 @@
+# ai.txt - AI Crawler Instructions for Eastory SL
+# https://eastorysl.netlify.app/ai.txt
+
+# Allow AI crawlers to use public content for training and indexing
+# We want our travel content to be discoverable through AI tools
+
+User-agent: *
+Allow: /
+
+# Specific instructions per crawler
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: GPT-User
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: Claude-API
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: FacebookBot
+Allow: /
+
+# Contact
+Contact: https://eastorysl.netlify.app/
+
+# Last updated: 2026-07-08
