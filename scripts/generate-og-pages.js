@@ -124,6 +124,10 @@ async function main() {
     { path: '/map', title: 'Sri Lanka Interactive Map', desc: 'Explore Sri Lanka with our interactive map — find destinations, hotels, restaurants, and points of interest across the island.', image: '/images/home/hero.png' },
     { path: '/privacy-policy', title: 'Privacy Policy', desc: 'Privacy Policy for Eastory SL. Learn how we collect, use, and protect your personal information.', image: '/images/home/hero.png' },
     { path: '/terms-of-service', title: 'Terms of Service', desc: 'Terms of Service for Eastory SL. Read the rules and guidelines for using our platform.', image: '/images/home/hero.png' },
+    { path: '/business-terms', title: 'Business Terms', desc: 'Business Terms for Eastory SL. Learn about listing policies, claims, and removal procedures.', image: '/images/home/hero.png' },
+    { path: '/cookie-policy', title: 'Cookie Policy', desc: 'Cookie Policy for Eastory SL. Learn about the cookies and tracking technologies we use.', image: '/images/home/hero.png' },
+    { path: '/disclaimer', title: 'Disclaimer', desc: 'Disclaimer for Eastory SL. Important information about our content, listings, and liability.', image: '/images/home/hero.png' },
+    { path: '/unsubscribe', title: 'Unsubscribe', desc: 'Unsubscribe from Eastory SL newsletter. Manage your email preferences.', image: '/images/home/hero.png' },
   ]
   listRoutes.forEach((r) => {
     generatePage(r.path, r.title, r.desc, r.image, indexHtml)

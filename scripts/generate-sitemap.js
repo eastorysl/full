@@ -14,6 +14,12 @@ const staticPages = [
   { loc: '/gallery', priority: '0.7', changefreq: 'monthly' },
   { loc: '/map', priority: '0.7', changefreq: 'monthly' },
   { loc: '/advertise', priority: '0.6', changefreq: 'monthly' },
+  { loc: '/privacy-policy', priority: '0.3', changefreq: 'yearly' },
+  { loc: '/terms-of-service', priority: '0.3', changefreq: 'yearly' },
+  { loc: '/business-terms', priority: '0.3', changefreq: 'yearly' },
+  { loc: '/cookie-policy', priority: '0.3', changefreq: 'yearly' },
+  { loc: '/disclaimer', priority: '0.3', changefreq: 'yearly' },
+  { loc: '/unsubscribe', priority: '0.2', changefreq: 'yearly' },
 ]
 
 async function main() {
