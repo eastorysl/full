@@ -7,6 +7,7 @@ import { distanceFromColombo } from '../utils/distance'
 import SEO from '../components/seo/SEO'
 import { handleImgError } from '../utils/fallback'
 import { sanitizeHTML } from '../utils/sanitize'
+import { getEffectiveTier } from '../utils/mapHelpers'
 import SimilarPlaces from '../components/ui/SimilarPlaces'
 import EmailFeedback from '../components/ui/EmailFeedback'
 
@@ -36,6 +37,7 @@ export default function DestinationDetail() {
   const location = useLocation()
   const item = destinations.find((d) => d.id === id && d.category === category)
   const meta = catMeta[category] || { label: 'Destination', color: 'teal', gradient: 'from-teal-500 to-cyan-500' }
+  const effectiveTier = getEffectiveTier(item)
 
   const SITE_URL = import.meta.env.VITE_SITE_URL || 'https://eastorysl.netlify.app'
   const shareUrl = `${SITE_URL}${location.pathname}`
@@ -115,12 +117,12 @@ export default function DestinationDetail() {
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/20 text-white backdrop-blur-sm">
                   {meta.label}
                 </span>
-                {item.tier === 'premium' && (
+                {effectiveTier === 'premium' && (
                   <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-400/30 text-white backdrop-blur-sm">
                     <FiAward className="text-sm" /> Premium Pick
                   </span>
                 )}
-                {item.tier === 'featured' && (
+                {effectiveTier === 'featured' && (
                   <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-400/30 text-white backdrop-blur-sm">
                     <FiAward className="text-sm" /> Featured
                   </span>
@@ -227,12 +229,12 @@ export default function DestinationDetail() {
                       {meta.label}
                     </span>
                     <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${
-                      item.tier === 'premium' ? 'bg-amber-100 text-amber-800' :
-                      item.tier === 'featured' ? 'bg-blue-100 text-blue-800' :
+                      effectiveTier === 'premium' ? 'bg-amber-100 text-amber-800' :
+                      effectiveTier === 'featured' ? 'bg-blue-100 text-blue-800' :
                       'bg-slate-100 text-slate-600'
                     }`}>
                       <FiAward className="text-sm" />
-                      {item.tier === 'premium' ? 'Premium Pick' : item.tier === 'featured' ? 'Featured' : 'Free'}
+                      {effectiveTier === 'premium' ? 'Premium Pick' : effectiveTier === 'featured' ? 'Featured' : 'Free'}
                     </span>
                   </div>
                 </div>

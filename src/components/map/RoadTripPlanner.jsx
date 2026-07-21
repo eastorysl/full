@@ -28,8 +28,8 @@ function SearchInput({ value, onChange, placeholder, onSelect, allData }) {
   }, [value, allData])
 
   return (
-    <div className="relative">
-      <div className="flex items-center gap-2 bg-slate-100 rounded-xl px-3 py-2.5 focus-within:bg-white focus-within:ring-2 focus-within:ring-teal-500/20 focus-within:shadow-sm transition-all duration-200">
+    <div className="relative rounded-xl focus-within:ring-2 focus-within:ring-teal-500/20 transition-all duration-200">
+      <div className="flex items-center gap-2 bg-slate-100 rounded-xl px-3 py-2.5 focus-within:bg-white focus-within:shadow-sm transition-all duration-200">
         <FiSearch className="text-slate-400 text-sm flex-shrink-0" />
         <input
           type="text"
@@ -38,7 +38,7 @@ function SearchInput({ value, onChange, placeholder, onSelect, allData }) {
           onFocus={() => setIsFocused(true)}
           onBlur={() => { timeoutRef.current = setTimeout(() => setIsFocused(false), 200) }}
           placeholder={placeholder}
-          className="flex-1 bg-transparent text-sm text-slate-700 placeholder:text-slate-400 outline-none min-h-[44px]"
+          className="flex-1 bg-transparent text-sm text-slate-700 placeholder:text-slate-400 italic outline-none focus-visible:ring-0 min-h-[44px]"
         />
         {value && (
           <button onClick={() => onChange('')} className="touch-manipulation min-h-[44px] min-w-[44px] flex items-center justify-center text-slate-400 hover:text-slate-600">

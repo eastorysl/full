@@ -18,7 +18,7 @@ export default function MapLayers({ activeLayers, onToggle }) {
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: -8, scale: 0.95 }}
       transition={{ duration: 0.2 }}
-      className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl shadow-black/10 border border-white/40 overflow-hidden"
+      className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl shadow-black/10 border border-white/40 overflow-hidden max-h-[280px]"
     >
       {layers.map((layer) => {
         const active = activeLayers[layer.id]

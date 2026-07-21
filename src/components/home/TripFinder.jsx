@@ -44,8 +44,8 @@ function PlaceSearch({ value, onChange, placeholder, onSelect }) {
   }
 
   return (
-    <div className="relative">
-      <div className="flex items-center gap-2 bg-slate-50 rounded-xl px-3 py-2.5 focus-within:bg-white focus-within:ring-2 focus-within:ring-teal-500/20 transition-all">
+    <div className="relative rounded-xl focus-within:ring-2 focus-within:ring-teal-500/20 transition-all">
+      <div className="flex items-center gap-2 bg-slate-50 rounded-xl px-3 py-2.5 focus-within:bg-white transition-all">
         <FiMapPin className="text-teal-500 text-sm shrink-0" />
         <input
           type="text"
@@ -55,7 +55,7 @@ function PlaceSearch({ value, onChange, placeholder, onSelect }) {
           onBlur={() => { timeoutRef.current = setTimeout(() => setFocused(false), 200) }}
           aria-label="Search start point"
           placeholder={placeholder}
-          className="flex-1 bg-transparent text-sm text-slate-700 placeholder:text-slate-400 outline-none min-h-[44px]"
+          className="flex-1 bg-transparent text-sm text-slate-700 placeholder:text-slate-400 italic outline-none focus-visible:ring-0 min-h-[44px]"
         />
         {value && (
           <button onClick={() => handleChange('')} className="min-h-[44px] min-w-[44px] flex items-center justify-center text-slate-400 hover:text-slate-600">

@@ -143,7 +143,7 @@ export default function BusinessCard({ business, index }) {
               Show on Map
             </Link>
             <a
-              href={business.googleMapsLink || `https://www.google.com/maps/dir/?api=1&destination=${business.coordinates.lat},${business.coordinates.lng}`}
+              href={business.googleMapsLink || `https://www.google.com/maps/dir/?api=1&destination=${Array.isArray(business.coordinates) ? business.coordinates[0] : business.coordinates?.lat},${Array.isArray(business.coordinates) ? business.coordinates[1] : business.coordinates?.lng}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex-1 flex items-center justify-center gap-2 min-h-[44px] rounded-xl bg-coral-50 text-coral-700 text-sm font-semibold shadow-sm hover:bg-coral-100 hover:shadow-md transition-all duration-300"

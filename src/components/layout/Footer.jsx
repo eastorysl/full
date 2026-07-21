@@ -50,9 +50,9 @@ export default function Footer() {
       method: 'POST',
       mode: 'cors',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Type': 'text/plain',
       },
-      body: new URLSearchParams({
+      body: JSON.stringify({
         email: email,
         pageUrl: window.location.href
       })
@@ -166,7 +166,7 @@ export default function Footer() {
                     placeholder="Enter your email"
                     disabled={subStatus === 'loading'}
                     autoComplete="email"
-                    className="flex-1 bg-transparent px-3 py-2.5 min-h-[44px] text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-0 disabled:opacity-50"
+                    className="flex-1 bg-transparent px-3 py-2.5 min-h-[44px] text-sm text-white placeholder:text-slate-500 italic focus:outline-none focus:ring-0 disabled:opacity-50"
                     required
                   />
                   <button
@@ -239,6 +239,12 @@ export default function Footer() {
               <Link to="/privacy-policy" className="text-slate-500 hover:text-teal-400 text-xs transition-colors">Privacy Policy</Link>
               <span className="text-slate-700 text-xs">|</span>
               <Link to="/terms-of-service" className="text-slate-500 hover:text-teal-400 text-xs transition-colors">Terms of Service</Link>
+              <span className="text-slate-700 text-xs">|</span>
+              <Link to="/business-terms" className="text-slate-500 hover:text-teal-400 text-xs transition-colors">Business Terms</Link>
+              <span className="text-slate-700 text-xs">|</span>
+              <Link to="/cookie-policy" className="text-slate-500 hover:text-teal-400 text-xs transition-colors">Cookie Policy</Link>
+              <span className="text-slate-700 text-xs">|</span>
+              <Link to="/disclaimer" className="text-slate-500 hover:text-teal-400 text-xs transition-colors">Disclaimer</Link>
               <button
                 onClick={scrollToTop}
                 className="w-11 h-11 rounded-xl bg-slate-800 hover:bg-teal-600 flex items-center justify-center text-slate-400 hover:text-white transition-all duration-300 hover:shadow-lg hover:shadow-teal-500/20 hover:-translate-y-0.5"

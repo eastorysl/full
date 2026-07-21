@@ -147,7 +147,7 @@ export default function SriLankaPride() {
       />
       <section className="relative pt-28 md:pt-32 pb-10 md:pb-12 overflow-hidden">
         <div className="absolute inset-0">
-          <img src="/images/home/Sri_Lanka_Pride.png" alt="" onError={handleImgError} className="w-full h-full object-cover" />
+          <img src="/images/home/Sri_Lanka_Pride.png" alt="Sri Lanka heritage and culture background" onError={handleImgError} className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-br from-slate-900/85 via-teal-950/75 to-slate-900/85" />
         </div>
         <div className="container-custom relative z-10 text-center px-4 sm:px-6 lg:px-8">

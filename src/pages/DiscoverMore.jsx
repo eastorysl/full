@@ -114,7 +114,7 @@ export default function DiscoverMore() {
           <div className="flex items-center gap-2 mb-3">
             <button
               onClick={() => setShowSearch(!showSearch)}
-              className={`min-h-[44px] px-4 py-2 rounded-full text-sm font-bold font-body items-center gap-2 shrink-0 transition-all duration-300 hidden lg:flex ${
+              className={`min-h-[44px] px-4 py-2 rounded-full text-sm font-bold font-['Poppins'] items-center gap-2 shrink-0 transition-all duration-300 hidden lg:flex ${
                 showSearch
                   ? 'bg-teal-600 text-white shadow-lg shadow-teal-500/20'
                   : 'bg-white text-slate-600 hover:bg-teal-50 hover:text-teal-700 border border-slate-200'
@@ -145,7 +145,7 @@ export default function DiscoverMore() {
                       key={cat}
                       onClick={() => setActiveCategory(cat)}
                       data-active={activeCategory === cat || undefined}
-                      className={`min-h-[44px] px-4 py-2 rounded-full text-sm font-bold font-body transition-all duration-300 whitespace-nowrap shrink-0 flex items-center gap-1.5 ${
+                      className={`min-h-[44px] px-4 py-2 rounded-full text-sm font-bold font-['Poppins'] transition-all duration-300 whitespace-nowrap shrink-0 flex items-center gap-1.5 ${
                          activeCategory === cat
                           ? 'bg-teal-600 text-white shadow-lg shadow-teal-500/20'
                           : 'bg-white text-slate-600 hover:bg-teal-50 hover:text-teal-700 border border-slate-200'

@@ -17,6 +17,7 @@ import PresetTrips from '../components/map/PresetTrips'
 import PresetRoutePolylines from '../components/map/TripPlanPolylines'
 import { presetTrips } from '../data/presetTrips'
 import NavigationMode from '../components/map/NavigationMode'
+import DraggableBottomSheet from '../components/map/DraggableBottomSheet'
 import useRoutePlanner from '../hooks/useRoutePlanner'
 
 import { destinations } from '../data/destinations'
@@ -43,6 +44,7 @@ function TripPlannerPanel({
 }) {
   const [activeTab, setActiveTab] = useState('plan')
   const [searchVal, setSearchVal] = useState('')
+  const [nearbyExpanded, setNearbyExpanded] = useState(false)
 
   return (
     <div className="flex flex-col flex-1 min-h-0 bg-white">
@@ -151,6 +153,8 @@ function TripPlannerPanel({
                 places={nearbyPlaces}
                 onSelectPlace={onSelectPlaceOnMap}
                 onAddToRoute={onAddNearbyToRoute}
+                isExpanded={nearbyExpanded}
+                onToggleExpand={setNearbyExpanded}
               />
             )}
           </>
@@ -184,6 +188,7 @@ export default function Map() {
 
   const [showLayers, setShowLayers] = useState(true)
   const [showList, setShowList] = useState(true)
+  const [sheetSnap, setSheetSnap] = useState(1)
   const [activeCategory, setActiveCategory] = useState(null)
   const [sidebarTab, setSidebarTab] = useState('places')
   const [userLocation, setUserLocation] = useState(null)
@@ -260,6 +265,7 @@ export default function Map() {
 
   const handleSelectItem = useCallback((item) => {
     setSelectedItem(item)
+    setSheetSnap(1)
     if (item.coordinates) {
       setFlyToCoord(item.coordinates)
     }
@@ -267,6 +273,11 @@ export default function Map() {
 
   const handleClosePanel = useCallback(() => {
     setSelectedItem(null)
+    setSheetSnap(1)
+  }, [])
+
+  const handleMapMove = useCallback(() => {
+    setSheetSnap(0)
   }, [])
 
   const fetchLocation = useCallback((flyTo) => {
@@ -327,6 +338,7 @@ export default function Map() {
       rp.loadStopsByIds(ids, ALL_DATA)
       setSidebarTab('planner')
       setShowList(true)
+      setSheetSnap(1)
       const presetStops = ids.map(id => ALL_DATA.find(d => d.id === id)).filter(Boolean)
       if (presetStops.length >= 2) {
         rp.generateRoute(presetStops)
@@ -363,6 +375,7 @@ export default function Map() {
     const coord = Array.isArray(place.coordinates) ? place.coordinates : null
     if (coord) setFlyToCoord(coord)
     setSelectedItem(place)
+    setSheetSnap(1)
   }, [])
 
   const handleAddNearbyToRoute = useCallback((place) => {
@@ -406,6 +419,7 @@ export default function Map() {
     rp.loadStopsByIds(preset.stopIds, ALL_DATA)
     setSidebarTab('planner')
     setShowList(true)
+    setSheetSnap(1)
     rp.generateRoute(presetStops)
   }, [rp.loadStopsByIds, rp.generateRoute])
 
@@ -435,6 +449,7 @@ export default function Map() {
 
   return (
     <div className="h-full relative">
+      <h1 className="sr-only">Sri Lanka Interactive Map</h1>
       <SEO
         title="Sri Lanka Interactive Map"
         description="Explore Sri Lanka with our interactive map — find destinations, hotels, restaurants, and points of interest across the island."
@@ -490,7 +505,7 @@ export default function Map() {
                   </div>
                   <button
                     onClick={() => setShowList(false)}
-                    className="touch-manipulation w-9 h-9 flex items-center justify-center text-slate-400 hover:text-red-500 transition-colors shrink-0"
+                    className="touch-manipulation w-11 h-11 flex items-center justify-center text-slate-400 hover:text-red-500 transition-colors shrink-0"
                     aria-label="Close panel"
                   >
                     <FiX className="text-sm" />
@@ -552,6 +567,7 @@ export default function Map() {
             selectedItem={selectedItem}
             userLocation={userLocation}
             onMapReady={handleMapReady}
+            onMapMove={handleMapMove}
           >
             <RoutePolyline
               geometry={rp.routeGeometry}
@@ -587,7 +603,7 @@ export default function Map() {
       </div>
 
         {/* Map Controls */}
-        <div className={`fixed md:top-24 top-20 right-4 z-30 flex-col gap-2 items-end ${selectedItem ? 'hidden' : showList ? 'hidden md:flex' : 'flex'}`}>
+        <div className={`fixed md:top-24 top-20 right-4 z-30 flex-col gap-2 items-end ${selectedItem ? 'hidden' : sheetSnap > 0 ? 'hidden md:flex' : 'flex'}`}>
           <div className="flex items-center gap-2">
             <button
               onClick={handleLocate}
@@ -633,148 +649,92 @@ export default function Map() {
           )}
         </div>
 
-        {/* Show list button */}
-      {!selectedItem && !showList && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40">
-          <button
-            onClick={() => { setSidebarTab('places'); setShowList(true) }}
-            className="touch-manipulation px-4 py-3 min-h-[44px] rounded-full bg-white/90 backdrop-blur-xl shadow-xl border border-white/30 flex items-center gap-1.5 text-xs font-medium text-slate-700 hover:text-teal-600 transition-all duration-200"
-          >
-            <FiList size={13} /> {filteredData.length} places
-          </button>
-        </div>
-      )}
-
-      {/* Mobile Place List Bottom Sheet */}
-      <AnimatePresence>
-        {showList && (
-          <motion.div
-            initial={{ y: '100%' }}
-            animate={{ y: 0 }}
-            exit={{ y: '100%' }}
-            transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-            className="fixed bottom-0 left-0 right-0 z-20 md:hidden"
-          >
-            <div
-              className="bg-white rounded-t-2xl shadow-2xl border-t border-slate-200 overflow-hidden flex flex-col transition-[height] duration-300 ease-in-out"
-              style={{ height: sidebarTab === 'planner' ? 'min(75vh, 560px)' : 'min(50vh, 420px)' }}
-            >
-              <button
-                onClick={() => setShowList(false)}
-                className="w-full flex justify-center pt-3 pb-2 shrink-0 cursor-pointer"
-                aria-label="Close list"
-              >
-                <div className="w-10 h-1 rounded-full bg-slate-400" />
-              </button>
-
-              {/* Tabs */}
-              <div className="flex items-center border-b border-slate-100 shrink-0">
-                <div className="flex flex-1">
-                  {[
-                    { id: 'places', icon: <FiMapPin className="text-xs" />, label: 'Places', count: filteredData.length },
-                    { id: 'planner', icon: <FiMap className="text-xs" />, label: 'Trip Planner' },
-                  ].map(tab => (
-                    <button
-                      key={tab.id}
-                      onClick={() => setSidebarTab(tab.id)}
-                      className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 text-xs font-semibold transition-all ${
-                        sidebarTab === tab.id
-                          ? 'text-teal-600 border-b-2 border-teal-500 bg-teal-50/50'
-                          : 'text-slate-400 hover:text-slate-600'
-                      }`}
-                    >
-                      {tab.icon}
-                      {tab.label}
-                      {tab.count !== undefined && (
-                        <span className="text-[10px] text-slate-400 font-normal">({tab.count})</span>
-                      )}
-                    </button>
-                  ))}
-                </div>
+      {/* Mobile Draggable Bottom Sheet */}
+      <DraggableBottomSheet
+        snapIndex={sheetSnap}
+        onSnapChange={setSheetSnap}
+      >
+        {/* Tabs */}
+        {!selectedItem && (
+          <div className="flex items-center border-b border-slate-100 shrink-0 sticky top-0 bg-white z-10">
+            <div className="flex flex-1">
+              {[
+                { id: 'places', icon: <FiMapPin className="text-xs" />, label: 'Places', count: filteredData.length },
+                { id: 'planner', icon: <FiMap className="text-xs" />, label: 'Trip Planner' },
+              ].map(tab => (
                 <button
-                  onClick={() => setShowList(false)}
-                  className="touch-manipulation w-9 h-9 flex items-center justify-center text-slate-400 hover:text-red-500 transition-colors shrink-0"
-                  aria-label="Close panel"
+                  key={tab.id}
+                  onClick={() => setSidebarTab(tab.id)}
+                  className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 text-xs font-semibold transition-all ${
+                    sidebarTab === tab.id
+                      ? 'text-teal-600 border-b-2 border-teal-500 bg-teal-50/50'
+                      : 'text-slate-400 hover:text-slate-600'
+                  }`}
                 >
-                  <FiX className="text-sm" />
+                  {tab.icon}
+                  {tab.label}
+                  {tab.count !== undefined && (
+                    <span className="text-[10px] text-slate-400 font-normal">({tab.count})</span>
+                  )}
                 </button>
-              </div>
-
-              {/* Tab Content */}
-              <div className="flex-1 min-h-0 overflow-hidden flex flex-col">
-              {sidebarTab === 'places' && (
-                <MapPlaceList
-                  items={filteredData}
-                  selectedItem={null}
-                  onSelect={(item) => {
-                    setSelectedItem(item)
-                    setShowList(false)
-                    if (item.coordinates) {
-                      setFlyToCoord(item.coordinates)
-                    }
-                  }}
-                  searchQuery={searchQuery}
-                  onSearchChange={setSearchQuery}
-                  activeCategory={activeCategory}
-                  onCategoryChange={setActiveCategory}
-                  onClose={() => setShowList(false)}
-                  showHeader={false}
-                />
-              )}
-
-              {sidebarTab === 'planner' && (
-                <TripPlannerPanel
-                  allData={ALL_DATA}
-                  stops={rp.stops}
-                  routeGeometry={rp.routeGeometry}
-                  legDurations={rp.legDurations}
-                  formattedDistance={rp.formattedDistance}
-                  formattedDuration={rp.formattedDuration}
-                  isLoadingRoute={rp.isLoadingRoute}
-                  routeError={rp.routeError}
-                  nearbyPlaces={rp.nearbyPlaces}
-                  activeStopIndex={rp.activeStopIndex}
-                  itinerary={rp.itinerary}
-                  onAddStop={rp.addStop}
-                  onRemoveStop={rp.removeStop}
-                  onClearStops={rp.clearStops}
-                  onReorderStops={rp.reorderStop}
-                  onLoadPreset={handlePresetLoadAndGenerate}
-                  onOptimize={rp.optimizeStops}
-                  onGenerateRoute={rp.generateRoute}
-                  onStopClick={handleRouteStopClick}
-                  onAddNearbyToRoute={handleAddNearbyToRoute}
-                  onSelectPlaceOnMap={handleSelectPlaceOnMap}
-                />
-              )}
-              </div>
+              ))}
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Mobile Detail Bottom Sheet */}
-      <AnimatePresence>
-        {selectedItem && (
-          <motion.div
-            initial={{ y: '100%' }}
-            animate={{ y: 0 }}
-            exit={{ y: '100%' }}
-            transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-            className="fixed bottom-0 left-0 right-0 z-30 lg:hidden"
-          >
-            <div
-              className="bg-white rounded-t-2xl shadow-2xl border-t border-slate-200 overflow-hidden"
-              style={{ height: 'min(75vh, 560px)' }}
+            <button
+              onClick={() => setSheetSnap(0)}
+              className="touch-manipulation w-9 h-9 flex items-center justify-center text-slate-400 hover:text-red-500 transition-colors shrink-0"
+              aria-label="Collapse panel"
             >
-              <div className="flex justify-center pt-2 pb-1 shrink-0">
-                <div className="w-10 h-1 rounded-full bg-slate-300" />
-              </div>
-              <MapSidePanel item={selectedItem} onClose={handleClosePanel} plannerProps={plannerProps} />
-            </div>
-          </motion.div>
+              <FiX className="text-sm" />
+            </button>
+          </div>
         )}
-      </AnimatePresence>
+
+        {/* List Content */}
+        {!selectedItem && sidebarTab === 'places' && (
+          <MapPlaceList
+            items={filteredData}
+            selectedItem={null}
+            onSelect={handleSelectItem}
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            activeCategory={activeCategory}
+            onCategoryChange={setActiveCategory}
+            onClose={() => setSheetSnap(0)}
+            showHeader={false}
+          />
+        )}
+
+        {!selectedItem && sidebarTab === 'planner' && (
+          <TripPlannerPanel
+            allData={ALL_DATA}
+            stops={rp.stops}
+            routeGeometry={rp.routeGeometry}
+            legDurations={rp.legDurations}
+            formattedDistance={rp.formattedDistance}
+            formattedDuration={rp.formattedDuration}
+            isLoadingRoute={rp.isLoadingRoute}
+            routeError={rp.routeError}
+            nearbyPlaces={rp.nearbyPlaces}
+            activeStopIndex={rp.activeStopIndex}
+            itinerary={rp.itinerary}
+            onAddStop={rp.addStop}
+            onRemoveStop={rp.removeStop}
+            onClearStops={rp.clearStops}
+            onReorderStops={rp.reorderStop}
+            onLoadPreset={handlePresetLoadAndGenerate}
+            onOptimize={rp.optimizeStops}
+            onGenerateRoute={rp.generateRoute}
+            onStopClick={handleRouteStopClick}
+            onAddNearbyToRoute={handleAddNearbyToRoute}
+            onSelectPlaceOnMap={handleSelectPlaceOnMap}
+          />
+        )}
+
+        {/* Detail Content */}
+        {selectedItem && (
+          <MapSidePanel item={selectedItem} onClose={handleClosePanel} plannerProps={plannerProps} />
+        )}
+      </DraggableBottomSheet>
 
 
       {/* Navigation Mode */}

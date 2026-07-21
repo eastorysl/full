@@ -30,7 +30,7 @@ const accentGradients = {
 
 
 export default function PrideCard({ item, index }) {
-  const m = meta[item.category] || meta['ancient-kingdoms']
+  const m = meta[item.category] || (import.meta.env.DEV && console.warn(`PrideCard: unknown category "${item.category}"`), meta['ancient-kingdoms'])
   const Icon = m.icon
   const isFamous = item.category === 'famous-people'
 

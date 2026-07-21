@@ -64,6 +64,7 @@ export default function NavigationMode({ isActive, navPosition, stops, legs, onS
           exit={{ y: '100%' }}
           transition={{ type: 'spring', damping: 25, stiffness: 300 }}
           className="fixed bottom-0 left-0 right-0 z-50 lg:bottom-4 lg:left-4 lg:right-auto lg:w-80"
+          style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
         >
           <div className="bg-slate-900 text-white rounded-t-2xl lg:rounded-2xl shadow-2xl overflow-hidden">
             {/* Header */}
@@ -144,12 +145,12 @@ export default function NavigationMode({ isActive, navPosition, stops, legs, onS
                   <div className="bg-white/10 rounded-lg p-2 text-center">
                     <FiMapPin className="text-blue-400 mx-auto mb-0.5 text-xs" />
                     <p className="text-base font-bold">{info.remainingStops}</p>
-                    <p className="text-[8px] text-white/50">Stops Left</p>
+                    <p className="text-[10px] text-white/50">Stops Left</p>
                   </div>
                   <div className="bg-white/10 rounded-lg p-2 text-center">
                     <FiNavigation className="text-blue-400 mx-auto mb-0.5 text-xs" />
                     <p className="text-base font-bold">{formatDistance(info.remDist)}</p>
-                    <p className="text-[8px] text-white/50">Distance</p>
+                    <p className="text-[10px] text-white/50">Distance</p>
                   </div>
                   <div className="bg-white/10 rounded-lg p-2 text-center">
                     <FiClock className="text-blue-400 mx-auto mb-0.5 text-xs" />
@@ -158,18 +159,18 @@ export default function NavigationMode({ isActive, navPosition, stops, legs, onS
                         ? `${Math.floor(info.remDur / 3600)}h ${Math.floor((info.remDur % 3600) / 60)}m`
                         : `${Math.floor(info.remDur / 60)}m`}
                     </p>
-                    <p className="text-[8px] text-white/50">ETA</p>
+                    <p className="text-[10px] text-white/50">ETA</p>
                   </div>
                 </div>
 
                 {/* Next stop */}
                 {info.currentStop < stops.length - 1 && (
                   <div className="bg-white/10 rounded-lg p-2.5">
-                    <p className="text-[9px] text-white/50 mb-0.5">Next Stop</p>
+                    <p className="text-[10px] text-white/50 mb-0.5">Next Stop</p>
                     <div className="flex items-center justify-between">
                       <p className="text-sm font-semibold truncate">{stops[info.currentStop + 1]?.name}</p>
                       {info.currentStop + 1 < stops.length - 1 && (
-                        <span className="text-[9px] text-white/40 ml-2 flex-shrink-0">
+                        <span className="text-[10px] text-white/40 ml-2 flex-shrink-0">
                           then {stops[info.currentStop + 2]?.name || `+${stops.length - info.currentStop - 2} more`}
                         </span>
                       )}
