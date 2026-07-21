@@ -59,7 +59,7 @@ function NearestCard({ dest, i, distance }) {
       layout
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: i * 0.06 }}
+      transition={{ duration: 0.5, delay: Math.min(i * 0.06, 0.3) }}
       viewport={{ once: true, margin: '-50px' }}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
@@ -68,7 +68,7 @@ function NearestCard({ dest, i, distance }) {
       aria-label={`View details for ${dest.name}`}
       className="cursor-pointer h-full"
     >
-      <div className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-slate-100 italic h-full flex flex-col">
+      <div className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-slate-100 h-full flex flex-col">
         <div className="relative overflow-hidden h-48 sm:h-56">
           <img
             src={dest.image}
@@ -100,12 +100,12 @@ function NearestCard({ dest, i, distance }) {
           </div>
         </div>
         <div className="p-4 flex flex-col flex-1">
-          <p className="text-slate-600 text-sm leading-relaxed mb-3 truncate">
+          <p className="text-slate-600 text-sm leading-relaxed mb-3 line-clamp-2">
             {dest.description}
           </p>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500 mb-2">
             {dest.district && (
-              <span className="flex items-center gap-1 text-slate-400">
+              <span className="flex items-center gap-1 text-slate-500">
                 <FiMapPin className="text-teal-500" />
                 {dest.district} District
               </span>
@@ -144,7 +144,7 @@ function NearestCard({ dest, i, distance }) {
                   e.stopPropagation()
                   window.open(dest.googleMapsLink || `https://www.google.com/maps/dir/?api=1&destination=${dest.coordinates.lat},${dest.coordinates.lng}`, '_blank', 'noopener,noreferrer')
                 }}
-                className="inline-flex items-center justify-center gap-2 w-full min-h-[44px] px-4 py-2.5 rounded-xl bg-gradient-to-r from-teal-500 to-ocean-600 text-white text-sm font-semibold shadow-md shadow-teal-500/20 hover:shadow-teal-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300"
+                className="inline-flex items-center justify-center gap-2 w-full min-h-[44px] px-4 py-2.5 rounded-xl bg-gradient-to-r from-teal-500 to-ocean-600 text-white text-sm font-semibold shadow-md shadow-teal-500/20 hover:shadow-teal-500/40 active:scale-[0.98] transition-all duration-300"
               >
                 <FiNavigation className="text-sm" />
                 Get Directions
@@ -234,7 +234,7 @@ export default function NearestPlaces() {
 
         {nearestPlaces.length === 0 && locating && (
           <div className="text-center py-10">
-            <div className="inline-flex items-center gap-2 text-teal-600 text-sm font-semibold">
+            <div className="inline-flex items-center gap-2 text-teal-600 text-sm font-semibold" role="status" aria-label="Finding your location">
               <span className="w-5 h-5 border-2 border-teal-500 border-t-transparent rounded-full animate-spin" />
               Finding your location...
             </div>
@@ -243,7 +243,7 @@ export default function NearestPlaces() {
 
         {nearestPlaces.length === 0 && locateError && (
           <div className="text-center py-10">
-            <p className="text-slate-400 text-sm mb-3">{locateError}</p>
+            <p className="text-slate-500 text-sm mb-3">{locateError}</p>
             <button
               onClick={fetchLocation}
               className="inline-flex items-center gap-2 px-5 py-2.5 min-h-[44px] rounded-xl bg-teal-50 text-teal-700 text-sm font-semibold hover:bg-teal-100 transition-colors duration-200"

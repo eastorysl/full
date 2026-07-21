@@ -5,6 +5,7 @@ const tierOrder = { premium: 0, featured: 1, standard: 2, free: 3 }
 
 export default function DestinationGrid({ destinations }) {
   const sorted = useMemo(() => {
+    if (!destinations) return []
     return [...destinations].sort((a, b) => (tierOrder[a.tier] ?? 2) - (tierOrder[b.tier] ?? 2))
   }, [destinations])
 

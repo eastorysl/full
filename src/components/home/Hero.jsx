@@ -15,8 +15,7 @@ export default function Hero() {
   return (
     <>
       <section className="relative min-h-screen flex items-center overflow-hidden">
-      <div className="absolute inset-0 bg-cover bg-no-repeat bg-center max-[768px]:bg-[right_top]" style={{ backgroundImage: 'url(/images/home/hero.png)' }} />
-      <img src="/images/home/hero.png" alt="Sri Lanka travel hero" onError={handleImgError} className="sr-only" />
+      <img src="/images/home/hero.png" alt="" aria-hidden="true" onError={handleImgError} className="absolute inset-0 w-full h-full object-cover object-[right_top] md:object-center max-[768px]:object-[right_top]" />
       <div className="absolute inset-0 bg-gradient-to-r from-slate-900/80 via-slate-900/40 to-transparent" />
       <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-slate-900/20" />
 
@@ -64,7 +63,7 @@ export default function Hero() {
         className="absolute bottom-0 left-0 right-0 z-20 pb-6 sm:pb-8"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-10">
-          <div className="bg-white/10 backdrop-blur-xl border border-white/10 rounded-2xl px-4 sm:px-6 md:px-8 lg:px-10 py-5 sm:py-7">
+          <div className="bg-white/15 backdrop-blur-xl border border-white/15 rounded-2xl px-4 sm:px-6 md:px-8 lg:px-10 py-5 sm:py-7">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8">
               {stats.map((stat) => (
                 <div key={stat.label} className="flex items-center gap-2 sm:gap-3">
@@ -73,7 +72,7 @@ export default function Hero() {
                   </div>
                   <div className="min-w-0">
                     <p className="text-white font-bold text-sm sm:text-base lg:text-lg leading-tight font-['Inter'] not-italic">{stat.value} {stat.label}</p>
-                    {stat.sub && <p className="text-white/50 text-xs sm:text-xs lg:text-sm leading-tight mt-0.5 font-['Inter'] not-italic">{stat.sub}</p>}
+                    {stat.sub && <p className="text-white/60 text-xs sm:text-xs lg:text-sm leading-tight mt-0.5 font-['Inter'] not-italic">{stat.sub}</p>}
                   </div>
                 </div>
               ))}

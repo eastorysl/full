@@ -88,7 +88,7 @@ export default function DiscoverMore() {
           url: `${import.meta.env.VITE_SITE_URL || 'https://eastorysl.netlify.app'}/discover-more`,
         }}
       />
-      <section className="relative pt-28 md:pt-32 pb-10 md:pb-12 overflow-hidden px-4 sm:px-6 lg:px-8">
+      <section className="relative pt-28 md:pt-32 pb-10 md:pb-12 overflow-hidden">
         <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: 'url(/images/discover/hero.png)' }} />
         <div className="absolute inset-0 bg-gradient-to-br from-slate-900/85 via-teal-950/85 to-slate-900/85">
           <div className="absolute inset-0 opacity-10 bg-grid" />
@@ -114,7 +114,7 @@ export default function DiscoverMore() {
           <div className="flex items-center gap-2 mb-3">
             <button
               onClick={() => setShowSearch(!showSearch)}
-              className={`min-h-[44px] px-4 py-2 rounded-full text-sm font-bold font-body items-center gap-2 shrink-0 transition-all duration-300 hidden lg:flex ${
+              className={`min-h-[44px] px-4 py-2 rounded-full text-sm font-bold font-['Poppins'] items-center gap-2 shrink-0 transition-all duration-300 hidden lg:flex ${
                 showSearch
                   ? 'bg-teal-600 text-white shadow-lg shadow-teal-500/20'
                   : 'bg-white text-slate-600 hover:bg-teal-50 hover:text-teal-700 border border-slate-200'
@@ -145,7 +145,7 @@ export default function DiscoverMore() {
                       key={cat}
                       onClick={() => setActiveCategory(cat)}
                       data-active={activeCategory === cat || undefined}
-                      className={`min-h-[44px] px-4 py-2 rounded-full text-sm font-bold font-body transition-all duration-300 whitespace-nowrap shrink-0 flex items-center gap-1.5 ${
+                      className={`min-h-[44px] px-4 py-2 rounded-full text-sm font-bold font-['Poppins'] transition-all duration-300 whitespace-nowrap shrink-0 flex items-center gap-1.5 ${
                          activeCategory === cat
                           ? 'bg-teal-600 text-white shadow-lg shadow-teal-500/20'
                           : 'bg-white text-slate-600 hover:bg-teal-50 hover:text-teal-700 border border-slate-200'
@@ -176,8 +176,8 @@ export default function DiscoverMore() {
           </div>
           {filtered.length === 0 ? (
             <div className="text-center py-16">
-              <p className="text-slate-400 text-lg mb-2">No results found</p>
-              <p className="text-slate-400 text-sm">Try adjusting your search or filter</p>
+              <p className="text-slate-500 text-lg mb-2">No results found</p>
+              <p className="text-slate-500 text-sm">Try adjusting your search or filter</p>
             </div>
           ) : (
             <BusinessGrid businesses={filtered} />

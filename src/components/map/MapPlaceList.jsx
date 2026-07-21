@@ -1,7 +1,7 @@
 import { useMemo, useRef, useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { FiMapPin, FiSearch, FiX, FiChevronRight, FiChevronLeft } from 'react-icons/fi'
-import { getCategoryClass, getCategoryLabel } from '../../utils/mapHelpers'
+import { getCategoryClass, getCategoryLabel, getEffectiveTier } from '../../utils/mapHelpers'
 import { handleImgError } from '../../utils/fallback'
 
 const CATEGORIES = [
@@ -57,7 +57,7 @@ export default function MapPlaceList({ items, selectedItem, onSelect, searchQuer
 
   const sorted = useMemo(() => {
     const tierOrder = { premium: 0, featured: 1, standard: 2, free: 2 }
-    return [...items].sort((a, b) => (tierOrder[a.tier] ?? 2) - (tierOrder[b.tier] ?? 2))
+    return [...items].sort((a, b) => (tierOrder[getEffectiveTier(a)] ?? 2) - (tierOrder[getEffectiveTier(b)] ?? 2))
   }, [items])
 
   return (
@@ -66,10 +66,10 @@ export default function MapPlaceList({ items, selectedItem, onSelect, searchQuer
         <div className={`px-4 ${showHeader ? 'pt-4 pb-3' : 'pt-3 pb-3'}`}>
           {showHeader && (
           <div className="flex items-center justify-between mb-3">
-            <h1 className="text-sm font-heading font-semibold text-slate-800">
+            <h2 className="text-sm font-heading font-semibold text-slate-800">
               Places
               <span className="ml-1.5 text-xs font-normal text-slate-400">({items.length})</span>
-            </h1>
+            </h2>
             {onClose && (
               <button onClick={onClose} aria-label="Close list" className="touch-manipulation w-11 h-11 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-400 hover:text-slate-600 transition-all duration-200">
                 <FiX size={16} />
@@ -106,7 +106,7 @@ export default function MapPlaceList({ items, selectedItem, onSelect, searchQuer
             >
               <FiChevronLeft size={12} />
             </button>
-            <div ref={scrollRef} onScroll={updateScrollState} className="flex gap-1.5 overflow-x-auto scroll-smooth no-scrollbar">
+            <div ref={scrollRef} onScroll={updateScrollState} className="flex gap-1.5 overflow-x-auto scroll-smooth no-scrollbar" style={{ touchAction: 'pan-x' }}>
               {CATEGORIES.map((cat) => {
                 const isActive = activeCategory === cat
                 return (

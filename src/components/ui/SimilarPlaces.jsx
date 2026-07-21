@@ -35,7 +35,7 @@ export default function SimilarPlaces({ items, currentItem, basePath, category }
           >
             <Link
               to={`/${basePath}/${item.category}/${item.id}`}
-              className="group flex lg:flex-row items-center gap-3 bg-slate-50 hover:bg-teal-50 rounded-xl p-2.5 min-h-[44px] transition-all duration-300 border border-transparent hover:border-teal-200"
+              className="group flex lg:flex-row items-center gap-3 bg-slate-50 hover:bg-teal-50 rounded-xl p-2.5 min-h-[44px] transition-all duration-300 border border-slate-200/60 hover:border-teal-200"
             >
               <div className="relative w-14 h-14 rounded-lg overflow-hidden shrink-0">
                 <img
@@ -51,7 +51,7 @@ export default function SimilarPlaces({ items, currentItem, basePath, category }
                   {item.name}
                 </h4>
                 {(item.location || item.district) && (
-                  <p className="flex items-center gap-1 text-[10px] text-slate-400 mt-0.5">
+                  <p className="flex items-center gap-1 text-[10px] text-slate-500 mt-0.5">
                     <FiMapPin className="shrink-0 text-teal-500" size={9} />
                     <span className="truncate">{item.location || item.district}</span>
                   </p>

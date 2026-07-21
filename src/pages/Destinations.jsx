@@ -135,9 +135,9 @@ export default function Destinations() {
           url: `${import.meta.env.VITE_SITE_URL || 'https://eastorysl.netlify.app'}/destinations`,
         }}
       />
-      <section className="relative pt-28 md:pt-32 pb-10 md:pb-12 overflow-hidden px-4 sm:px-6 lg:px-8">
+      <section className="relative pt-28 md:pt-32 pb-10 md:pb-12 overflow-hidden">
         <div className="absolute inset-0">
-          <img src="/images/home/Destinations.png" alt="" onError={handleImgError} className="w-full h-full object-cover" />
+          <img src="/images/home/Destinations.png" alt="Sri Lanka destinations background" onError={handleImgError} className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-br from-slate-900/85 via-teal-950/75 to-slate-900/85" />
         </div>
         <div className="container-custom relative z-10 text-center px-4 sm:px-6 lg:px-8">
@@ -223,8 +223,8 @@ export default function Destinations() {
           </div>
           {filtered.length === 0 ? (
             <div className="text-center py-16">
-              <p className="text-slate-400 text-lg mb-2">No destinations found</p>
-              <p className="text-slate-400 text-sm">Try adjusting your search or filter</p>
+              <p className="text-slate-500 text-lg mb-2">No destinations found</p>
+              <p className="text-slate-500 text-sm">Try adjusting your search or filter</p>
             </div>
           ) : (
             <DestinationGrid destinations={filtered} />

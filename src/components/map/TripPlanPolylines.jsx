@@ -3,6 +3,7 @@ import { useMap } from 'react-leaflet'
 import L from 'leaflet'
 import { presetTrips } from '../../data/presetTrips'
 import { fetchSegmentedRoute, formatDistance, formatDuration } from '../../services/routingService'
+import { escapeHTML } from '../../utils/escapeHTML'
 
 const ROUTE_COLOR = '#3b82f6'
 
@@ -97,7 +98,7 @@ export default function TripPlanPolylines({ allData, isVisible, onLoadPreset }) 
         })
         const marker = L.marker(rawCoords[0], { icon: loadingIcon, interactive: false }).addTo(map)
         marker.bindTooltip(
-          `<div style="font-weight:700;font-size:11px;">${trip.icon} ${trip.name}</div><div style="font-size:10px;color:#94a3b8;">Loading route\u2026</div>`,
+          `<div style="font-weight:700;font-size:11px;">${escapeHTML(trip.icon)} ${escapeHTML(trip.name)}</div><div style="font-size:10px;color:#94a3b8;">Loading route\u2026</div>`,
           { direction: 'top', offset: [0, -20], className: 'preset-route-popup' }
         )
         markersRef.current.push(marker)
@@ -129,7 +130,7 @@ export default function TripPlanPolylines({ allData, isVisible, onLoadPreset }) 
       }).addTo(map)
 
       const tooltipHtml = [
-        `<div style="font-weight:700;font-size:11px;line-height:1.2;">${trip.icon} ${trip.name}</div>`,
+        `<div style="font-weight:700;font-size:11px;line-height:1.2;">${escapeHTML(trip.icon)} ${escapeHTML(trip.name)}</div>`,
         `<div style="font-size:10px;color:#0f766e;font-weight:600;">${distLabel} · ${durLabel}</div>`,
         `<div style="font-size:9px;color:#94a3b8;">${trip.stopIds.length} stops · Road route</div>`,
       ].join('')
@@ -162,7 +163,7 @@ export default function TripPlanPolylines({ allData, isVisible, onLoadPreset }) 
 
           marker.bindTooltip(
             [
-              `<div style="font-weight:700;font-size:11px;">${trip.icon} ${trip.name}</div>`,
+              `<div style="font-weight:700;font-size:11px;">${escapeHTML(trip.icon)} ${escapeHTML(trip.name)}</div>`,
               `<div style="font-size:10px;color:#0f766e;font-weight:600;">${distLabel} · ${durLabel}</div>`,
               `<div style="font-size:9px;color:#94a3b8;">${i === 0 ? 'Start' : 'End'} · ${trip.stopIds.length} stops</div>`,
             ].join(''),

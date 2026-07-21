@@ -29,8 +29,8 @@ export default function BusinessCard({ business, index }) {
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-50px' }}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
-      className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-slate-100"
+      transition={{ duration: 0.5, delay: Math.min(index * 0.1, 0.5) }}
+      className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-slate-100 cursor-pointer"
     >
       <div className="relative overflow-hidden h-52 sm:h-56">
         <img
@@ -62,16 +62,16 @@ export default function BusinessCard({ business, index }) {
           </h3>
         </div>
       </div>
-      <div className="p-5">
+      <div className="p-4">
         <div className="flex items-center gap-2 mb-2">
-          <span className="text-xs text-slate-400">{business.subCategory || business.category}</span>
+          <span className="text-xs text-slate-500">{business.subCategory || business.category}</span>
         </div>
-        <p className="text-slate-600 text-sm leading-relaxed mb-4 truncate">
+        <p className="text-slate-600 text-sm leading-relaxed mb-4 line-clamp-2">
           {business.description}
         </p>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500 mb-3">
           {business.district && (
-            <span className="flex items-center gap-1 text-slate-400">
+            <span className="flex items-center gap-1 text-slate-500">
               <FiMapPin className="text-coral-500" />
               {business.district} District
             </span>
@@ -143,7 +143,7 @@ export default function BusinessCard({ business, index }) {
               Show on Map
             </Link>
             <a
-              href={business.googleMapsLink || `https://www.google.com/maps/dir/?api=1&destination=${business.coordinates.lat},${business.coordinates.lng}`}
+              href={business.googleMapsLink || `https://www.google.com/maps/dir/?api=1&destination=${Array.isArray(business.coordinates) ? business.coordinates[0] : business.coordinates?.lat},${Array.isArray(business.coordinates) ? business.coordinates[1] : business.coordinates?.lng}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex-1 flex items-center justify-center gap-2 min-h-[44px] rounded-xl bg-coral-50 text-coral-700 text-sm font-semibold shadow-sm hover:bg-coral-100 hover:shadow-md transition-all duration-300"

@@ -184,12 +184,7 @@ export default function RouteTimeline({ stops, legDurations, activeStopIndex, on
                     scale: isDragOver ? 1.02 : 1,
                   }}
                   exit={{ opacity: 0, x: 20 }}
-                  transition={{ duration: 0.25, delay: globalIndex * 0.03 }}
-                  draggable
-                  onDragStart={(e) => handleDragStart(e, globalIndex)}
-                  onDragOver={(e) => handleDragOver(e, globalIndex)}
-                  onDragEnd={handleDragEnd}
-                  onDrop={handleDrop}
+                  transition={{ duration: 0.25, delay: Math.min(globalIndex * 0.03, 0.3) }}
                 >
                   <div
                     className={`flex items-start gap-2 cursor-pointer group px-2 py-1.5 rounded-lg transition-all duration-200 ${
@@ -202,7 +197,11 @@ export default function RouteTimeline({ stops, legDurations, activeStopIndex, on
                   >
                     <div
                       className="flex-shrink-0 mt-1.5 cursor-grab active:cursor-grabbing text-slate-300 hover:text-slate-500 transition-colors flex flex-col gap-[2px] px-0.5"
-                      onMouseDown={(e) => e.stopPropagation()}
+                      draggable
+                      onDragStart={(e) => handleDragStart(e, globalIndex)}
+                      onDragOver={(e) => handleDragOver(e, globalIndex)}
+                      onDragEnd={handleDragEnd}
+                      onDrop={handleDrop}
                     >
                       <div className="flex gap-[2px]">
                         <span className="w-[3px] h-[3px] rounded-full bg-current" />

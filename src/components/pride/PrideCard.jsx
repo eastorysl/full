@@ -30,7 +30,7 @@ const accentGradients = {
 
 
 export default function PrideCard({ item, index }) {
-  const m = meta[item.category] || meta['ancient-kingdoms']
+  const m = meta[item.category] || (import.meta.env.DEV && console.warn(`PrideCard: unknown category "${item.category}"`), meta['ancient-kingdoms'])
   const Icon = m.icon
   const isFamous = item.category === 'famous-people'
 
@@ -69,12 +69,12 @@ export default function PrideCard({ item, index }) {
             </h3>
           </div>
         </div>
-        <div className="p-5">
-          <p className="text-slate-600 text-sm leading-relaxed truncate">
+        <div className="p-4">
+          <p className="text-slate-600 text-sm leading-relaxed line-clamp-2">
             {item.description}
           </p>
           {(item.location || item.origin || item.birthPlace) && (
-            <div className="flex items-center gap-1 text-xs text-slate-400 mt-2">
+            <div className="flex items-center gap-1 text-xs text-slate-500 mt-2">
               <FiMapPin className={m.iconColor} />
               <span>{item.location || item.origin || item.birthPlace}</span>
             </div>

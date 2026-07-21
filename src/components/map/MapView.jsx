@@ -8,6 +8,7 @@ import 'leaflet.markercluster/dist/MarkerCluster.css'
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 import { getCategoryLabel, getDetailPath } from '../../utils/mapHelpers'
 import { handleImgError } from '../../utils/fallback'
+import { escapeHTML } from '../../utils/escapeHTML'
 
 const iconMap = {
   religious: 'fa-place-of-worship', historical: 'fa-landmark', nature: 'fa-leaf', beaches: 'fa-umbrella-beach',
@@ -33,7 +34,7 @@ function getIcon(item) {
 
 function createMarkerIcon(icon, isSelected = false, name = '') {
   const label = name
-    ? `<span class="marker-label">${name}</span>`
+    ? `<span class="marker-label">${escapeHTML(name)}</span>`
     : ''
   return L.divIcon({
     className: `custom-marker${isSelected ? ' selected' : ''}`,
@@ -80,7 +81,7 @@ function UserLocationMarker({ position }) {
   return null
 }
 
-function MapContent({ filteredData, onSelectItem, flyToCoord, selectedItem, userLocation, onMapReady }) {
+function MapContent({ filteredData, onSelectItem, flyToCoord, selectedItem, userLocation, onMapReady, onMapMove }) {
   const map = useMap()
 
   const onMapReadyRef = useRef(onMapReady)
@@ -136,6 +137,13 @@ function MapContent({ filteredData, onSelectItem, flyToCoord, selectedItem, user
       map.setView([8.0, 81.0], 4.5)
     }
   }, [map, filteredData, flyToCoord])
+
+  useEffect(() => {
+    if (!onMapMove) return
+    const handler = () => onMapMove()
+    map.on('dragstart', handler)
+    return () => { map.off('dragstart', handler) }
+  }, [map, onMapMove])
 
   return (
     <>
@@ -226,7 +234,7 @@ function MapContent({ filteredData, onSelectItem, flyToCoord, selectedItem, user
   )
 }
 
-export default function MapView({ filteredData, onSelectItem, flyToCoord, selectedItem, userLocation, onMapReady, children }) {
+export default function MapView({ filteredData, onSelectItem, flyToCoord, selectedItem, userLocation, onMapReady, onMapMove, children }) {
   return (
     <MapContainer
       center={[8.0, 81.0]}
@@ -247,7 +255,7 @@ export default function MapView({ filteredData, onSelectItem, flyToCoord, select
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>'
         url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
       />
-      <MapContent filteredData={filteredData} onSelectItem={onSelectItem} flyToCoord={flyToCoord} selectedItem={selectedItem} userLocation={userLocation} onMapReady={onMapReady} />
+      <MapContent filteredData={filteredData} onSelectItem={onSelectItem} flyToCoord={flyToCoord} selectedItem={selectedItem} userLocation={userLocation} onMapReady={onMapReady} onMapMove={onMapMove} />
       {children}
     </MapContainer>
   )

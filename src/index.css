@@ -130,7 +130,7 @@
   }
 
   .card-hover:hover {
-    @apply -translate-y-2 shadow-2xl shadow-teal-500/10;
+    @apply shadow-2xl shadow-teal-500/10 ring-1 ring-teal-500/10;
   }
 
   .btn-primary {

@@ -30,7 +30,7 @@ function NearbyCard({ business, index, distance }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-50px' }}
       transition={{ duration: 0.4, delay: index * 0.08 }}
-      className="group bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-500 border border-slate-100 flex flex-col"
+      className="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-500 border border-slate-100 flex flex-col"
     >
       <div className="relative overflow-hidden h-36 sm:h-40">
         <img
@@ -84,7 +84,7 @@ function NearbyCard({ business, index, distance }) {
               href={business.googleMapsLink || `https://www.google.com/maps/dir/?api=1&destination=${business.coordinates.lat},${business.coordinates.lng}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-1 flex items-center justify-center gap-1.5 min-h-[44px] rounded-lg bg-gradient-to-r from-teal-500 to-ocean-600 text-white text-xs font-semibold shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+              className="flex-1 flex items-center justify-center gap-1.5 min-h-[44px] rounded-lg bg-gradient-to-r from-teal-500 to-ocean-600 text-white text-xs font-semibold shadow-sm hover:shadow-md active:scale-[0.98] transition-all duration-200"
             >
               <FiNavigation className="text-[10px]" />
               Directions
@@ -163,7 +163,7 @@ export default function NearestBusinesses() {
 
         {nearestBusinesses.length === 0 && locating && (
           <div className="text-center py-10">
-            <div className="inline-flex items-center gap-2 text-teal-600 text-sm font-semibold">
+            <div className="inline-flex items-center gap-2 text-teal-600 text-sm font-semibold" role="status" aria-label="Finding nearby businesses">
               <span className="w-5 h-5 border-2 border-teal-500 border-t-transparent rounded-full animate-spin" />
               Finding businesses near you...
             </div>
@@ -172,7 +172,7 @@ export default function NearestBusinesses() {
 
         {nearestBusinesses.length === 0 && locateError && (
           <div className="text-center py-10">
-            <p className="text-slate-400 text-sm mb-3">{locateError}</p>
+            <p className="text-slate-500 text-sm mb-3">{locateError}</p>
             <button
               onClick={fetchLocation}
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-teal-50 text-teal-700 text-sm font-semibold hover:bg-teal-100 transition-colors duration-200"
@@ -196,7 +196,7 @@ export default function NearestBusinesses() {
             <div className="flex justify-center mt-8">
               <Link
                 to="/discover-more"
-                className="group inline-flex items-center gap-2 px-7 py-3 min-h-[44px] rounded-xl bg-gradient-to-r from-teal-600 to-ocean-500 text-white font-heading font-semibold italic text-sm shadow-lg shadow-teal-500/20 hover:shadow-xl hover:shadow-teal-500/30 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300"
+                className="group inline-flex items-center gap-2 px-7 py-3 min-h-[44px] rounded-xl bg-gradient-to-r from-teal-600 to-ocean-500 text-white font-heading font-semibold italic text-sm shadow-lg shadow-teal-500/20 hover:shadow-xl hover:shadow-teal-500/30 active:scale-[0.98] transition-all duration-300"
               >
                 Discover More Businesses
                 <FiArrowRight className="group-hover:translate-x-1 transition-transform duration-300" />

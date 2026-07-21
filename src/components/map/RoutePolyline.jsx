@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { useMap } from 'react-leaflet'
 import L from 'leaflet'
+import { escapeHTML } from '../../utils/escapeHTML'
 
 function getStopLabel(index) {
   if (index < 26) return String.fromCharCode(65 + index)
@@ -149,7 +150,7 @@ function StopMarkers({ stops, activeIndex, onSelect }) {
               white-space:nowrap;max-width:120px;overflow:hidden;text-overflow:ellipsis;
               box-shadow:0 1px 4px rgba(0,0,0,0.1);
               text-align:center;line-height:1.3;
-            ">${stop.name}</div>` : ''}
+            "            >${escapeHTML(stop.name)}</div>` : ''}
             ${isActive ? '<div style="position:absolute;inset:-6px;border-radius:50%;border:2px solid #4285F4;opacity:0.5;animation:pulse-ring 1.5s infinite;"></div>' : ''}
           </div>
         `,

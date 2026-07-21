@@ -10,6 +10,7 @@ export default function GalleryGrid({ images, initialItem, showAllLink }) {
   const [selectedImage, setSelectedImage] = useState(null)
 
   const scopedImages = useMemo(() => {
+    if (!images) return []
     if (!initialItem) return images
     return images.filter((img) => img.itemId === initialItem)
   }, [images, initialItem])
@@ -28,6 +29,12 @@ export default function GalleryGrid({ images, initialItem, showAllLink }) {
     if (!selectedImage) return -1
     return filtered.findIndex((img) => img.id === selectedImage.id)
   }, [filtered, selectedImage])
+
+  useEffect(() => {
+    if (selectedImage && currentIndex === -1) {
+      setSelectedImage(null)
+    }
+  }, [selectedImage, currentIndex])
 
   useEffect(() => {
     if (!selectedImage) return
@@ -70,12 +77,13 @@ export default function GalleryGrid({ images, initialItem, showAllLink }) {
       {!showAllLink && (
         <div className="relative mb-8">
           <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-          <input
+           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by name, category, or location..."
-            className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-white border border-slate-200 text-sm text-slate-800 italic placeholder:text-slate-400 placeholder:italic outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-400 transition-all"
+            aria-label="Search gallery photos"
+            className="w-full pl-12 pr-4 py-3.5 min-h-[44px] rounded-xl bg-white border border-slate-200 text-sm text-slate-800 placeholder:text-slate-400 italic outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-400 transition-all"
           />
         </div>
       )}
@@ -88,7 +96,7 @@ export default function GalleryGrid({ images, initialItem, showAllLink }) {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
-            transition={{ duration: 0.4, delay: i * 0.05 }}
+            transition={{ duration: 0.4, delay: Math.min(i * 0.05, 0.3) }}
             onClick={() => setSelectedImage(image)}
             className="group relative rounded-2xl overflow-hidden aspect-[4/3] bg-slate-100 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
           >

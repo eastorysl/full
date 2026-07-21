@@ -36,7 +36,7 @@ const features = [
   { label: 'Google Map Directions', free: true, featured: true, premium: true },
   { label: 'Photos', free: true, featured: true, premium: true },
   { label: 'Featured Badge', free: false, featured: true, premium: true },
-  { label: 'Homepage Feature', free: false, featured: true, premium: true },
+  { label: 'Single Page Website', free: false, featured: true, premium: true },
   { label: 'WhatsApp Custom Message', free: false, featured: true, premium: true },
   { label: 'Social Media Takeover', free: false, featured: false, premium: true },
   { label: 'Dedicated Website', free: false, featured: false, premium: true },
@@ -58,7 +58,7 @@ function StepIndicator({ current }) {
           <div key={s.id} className="flex items-center">
             <div className="flex flex-col items-center">
               <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 ${
+                className={`w-11 h-11 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 ${
                   current > s.id
                     ? 'bg-teal-500 text-white'
                     : current === s.id
@@ -140,16 +140,18 @@ function Step1({ selected, onSelect, onNext }) {
       {/* Desktop Table */}
       <div className="hidden sm:block bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[600px] border-separate border-spacing-0">
+          <table className="w-full min-w-[600px] border-separate border-spacing-0" aria-label="Plan comparison">
             <thead>
               <tr className="bg-slate-900">
-                <th className="text-left py-4 px-6 bg-slate-900 text-white font-heading font-semibold text-base w-2/5">Feature</th>
+                <th scope="col" className="text-left py-4 px-6 bg-slate-900 text-white font-heading font-semibold text-base w-2/5">Feature</th>
                 {plans.map((p) => {
                   const isActive = selected === p.id
                   return (
                     <th
                       key={p.id}
+                      scope="col"
                       onClick={() => handleSelect(p.id)}
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleSelect(p.id) } }}
                       className={`relative py-4 px-4 text-center font-heading font-semibold text-base cursor-pointer transition-colors duration-200 select-none ${
                         isActive
                           ? 'bg-teal-600 text-white shadow-[inset_0_0_0_2px_#2dd4bf]'
@@ -186,6 +188,9 @@ function Step1({ selected, onSelect, onNext }) {
                         <td
                           key={p.id}
                           onClick={() => handleSelect(p.id)}
+                          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleSelect(p.id) } }}
+                          role="button"
+                          tabIndex={0}
                           className={`py-3 px-4 text-center cursor-pointer transition-colors duration-150 ${
                             isActive
                               ? `bg-teal-50 shadow-[inset_2px_0_0_0_#2dd4bf,inset_-2px_0_0_0_#2dd4bf${isLast ? ',inset_0_-2px_0_0_#2dd4bf' : ''}]`
@@ -244,7 +249,7 @@ function Step2({ formData, onChange, onNext, onBack }) {
     if (!formData.businessName.trim()) e.businessName = 'Required'
     if (!formData.ownerName.trim()) e.ownerName = 'Required'
     if (!formData.email.trim()) e.email = 'Required'
-    else if (!/\S+@\S+\.\S+/.test(formData.email)) e.email = 'Invalid email'
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) e.email = 'Invalid email'
     if (!formData.phone.trim()) e.phone = 'Required'
     if (!formData.category) e.category = 'Required'
     setErrors(e)
@@ -394,6 +399,7 @@ function Step2({ formData, onChange, onNext, onBack }) {
 
 function Step3({ selected, formData, onBack, onSubmit }) {
   const plan = plans.find((p) => p.id === selected)
+  const [agreed, setAgreed] = useState(false)
 
   if (!plan) return null
 
@@ -462,6 +468,50 @@ function Step3({ selected, formData, onBack, onSubmit }) {
         </div>
       </div>
 
+      <div className="max-w-2xl mx-auto mt-6">
+        <div className="bg-gradient-to-br from-teal-50 to-emerald-50 rounded-2xl border-2 border-dashed border-teal-300 p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-9 h-9 rounded-xl bg-teal-500 flex items-center justify-center shrink-0">
+              <FiCheck className="w-5 h-5 text-white" />
+            </div>
+            <h3 className="font-heading font-bold text-slate-900">Terms &amp; Conditions</h3>
+          </div>
+          <p className="text-sm text-slate-600 mb-4">By submitting this listing, you agree to the following:</p>
+          <ol className="space-y-2.5 mb-5">
+            {[
+              'All information provided is accurate, current, and belongs to the business owner or an authorised representative.',
+              'The listing is for a legitimate tourism-related business operating in Sri Lanka.',
+              'You understand that EastorySL reserves the right to edit, modify, or remove any listing that contains misleading, offensive, or inappropriate content.',
+              'Your listing may be publicly visible on the EastorySL platform, including your business name, contact details, and location.',
+              'Featured and Premium listings are active for the paid period.',
+              'You will not hold EastorySL liable for any business outcomes resulting from the listing, including loss of revenue or customer disputes.',
+              'You may request removal of your listing at any time by contacting us via WhatsApp at +94 72 436 2001.',
+            ].map((term, i) => (
+              <li key={i} className="flex items-start gap-3 text-sm text-slate-600 leading-relaxed">
+                <span className="w-5 h-5 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">{i + 1}</span>
+                {term}
+              </li>
+            ))}
+          </ol>
+          <label className={`flex items-start gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 ${agreed ? 'border-teal-500 bg-white shadow-sm' : 'border-white bg-white/60 hover:border-teal-300'}`}>
+            <div className="relative mt-0.5">
+              <input
+                type="checkbox"
+                checked={agreed}
+                onChange={(e) => setAgreed(e.target.checked)}
+                className="sr-only peer"
+              />
+              <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all duration-200 ${agreed ? 'bg-teal-500 border-teal-500' : 'border-slate-300 bg-white peer-hover:border-slate-400'}`}>
+                {agreed && <FiCheck className="w-3.5 h-3.5 text-white" />}
+              </div>
+            </div>
+            <span className="text-sm text-slate-700 leading-snug">
+              I have read and agree to the <Link to="/business-terms" target="_blank" className="text-teal-600 hover:underline font-medium">Business Listing Terms</Link>, <Link to="/terms-of-service" target="_blank" className="text-teal-600 hover:underline font-medium">Terms of Service</Link> and <Link to="/privacy-policy" target="_blank" className="text-teal-600 hover:underline font-medium">Privacy Policy</Link> of EastorySL.
+            </span>
+          </label>
+        </div>
+      </div>
+
       <div className="flex justify-between mt-8">
         <button
           onClick={onBack}
@@ -469,17 +519,22 @@ function Step3({ selected, formData, onBack, onSubmit }) {
         >
           <FiArrowLeft /> Back
         </button>
-        <SubmitButton onSubmit={onSubmit} />
+        <SubmitButton onSubmit={onSubmit} disabled={!agreed} />
       </div>
     </div>
   )
 }
 
-function SubmitButton({ onSubmit }) {
+function SubmitButton({ onSubmit, disabled }) {
   return (
     <button
       onClick={onSubmit}
-      className="inline-flex items-center gap-2 px-6 py-3 min-h-[44px] rounded-xl font-semibold text-sm bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-500/25 transition-all duration-300"
+      disabled={disabled}
+      className={`inline-flex items-center gap-2 px-6 py-3 min-h-[44px] rounded-xl font-semibold text-sm transition-all duration-300 ${
+        disabled
+          ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
+          : 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-500/25'
+      }`}
     >
       <FaWhatsapp /> Send via WhatsApp
     </button>
@@ -526,7 +581,7 @@ export default function Advertise() {
       formData.description ? `*Description:* ${formData.description}` : '',
     ].filter(Boolean).join('\n')
 
-    window.open(`https://wa.me/94724362001?text=${encodeURIComponent(msg)}`, '_blank')
+    window.open(`https://wa.me/94724362001?text=${encodeURIComponent(msg)}`, '_blank', 'noopener,noreferrer')
   }
 
   return (
@@ -552,7 +607,7 @@ export default function Advertise() {
         }}
       />
 
-      <section className="relative pt-28 md:pt-32 pb-10 md:pb-12 overflow-hidden px-4 sm:px-6 lg:px-8">
+      <section className="relative pt-28 md:pt-32 pb-10 md:pb-12 overflow-hidden">
         <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: 'url(/images/discover/hero.png)' }} />
         <div className="absolute inset-0 bg-gradient-to-br from-slate-900/85 via-teal-950/85 to-slate-900/85">
           <div className="absolute inset-0 opacity-10 bg-grid" />

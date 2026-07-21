@@ -6,6 +6,7 @@ import { prideItems } from '../data/sriLankaPride'
 import { distanceFromColombo } from '../utils/distance'
 import SEO from '../components/seo/SEO'
 import { handleImgError } from '../utils/fallback'
+import { sanitizeHTML } from '../utils/sanitize'
 import SimilarPlaces from '../components/ui/SimilarPlaces'
 import EmailFeedback from '../components/ui/EmailFeedback'
 
@@ -191,7 +192,7 @@ export default function PrideDetail() {
                 <h2 className="text-2xl md:text-3xl font-heading font-bold text-slate-900 mb-4">{item.name}</h2>
                 <div
                   className="destination-content prose prose-slate max-w-none text-slate-600"
-                  dangerouslySetInnerHTML={{ __html: item.detail || item.description }}
+                  dangerouslySetInnerHTML={{ __html: sanitizeHTML(item.detail || item.description) }}
                 />
               </div>
             </div>

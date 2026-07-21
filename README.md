@@ -34,7 +34,7 @@
 |---------|------|---------|-------|
 | **Destinations** | `destinations.js` | 123 | Travel experiences — beaches, nature, adventure, culture |
 | **Sri Lanka Pride** | `sriLankaPride.js` | 101 | Heritage & identity — kingdoms, food, people, seasonal foods, tea trails |
-| **Businesses** | `businesses.js` | 86 | Local services — hotels, shops, water sports, tours |
+| **Businesses** | `businesses.js` | 86 | Local services — hotels, shops, water sports, tours (all with `expiresAt` field) |
 | **Preset Trips** | `presetTrips.js` | 12 | Curated multi-stop road trip routes |
 | **Gallery** | `gallery.js` | 4 sources | Extra images per destination/pride item |
 | **Schema Reference** | `schema.js` | 5 schemas | Admin guide — field definitions, options, templates, examples |
@@ -50,7 +50,7 @@ eastory-sri-lanka-hub/
 ├── public/
 │   ├── images/               # Static image assets
 │   ├── robots.txt            # Crawler rules + sitemap link
-│   ├── sitemap.xml           # Auto-generated (231 URLs)
+   │   ├── sitemap.xml           # Auto-generated (237 URLs)
 │   ├── ai.txt                # AI crawler instructions
 │   ├── llms.txt              # LLM-friendly site summary
 │   └── favicon.svg
@@ -66,7 +66,7 @@ eastory-sri-lanka-hub/
 │   │   ├── tourism/          # DestinationCard, DestinationGrid
 │   │   ├── discover/         # BusinessCard, BusinessGrid
 │   │   ├── pride/            # PrideCard
-│   │   ├── map/              # MapView, MapSidePanel (Places/Trip Planner tabs), MapPlaceList, MapLayers, RoadTripPlanner, RoutePolyline, RouteSummary, RouteTimeline, NavigationMode, NearbyPlaces, PresetTrips, PresetRoutePolylines
+│   │   ├── map/              # MapView, MapSidePanel (Places/Trip Planner tabs), MapPlaceList, MapLayers, DraggableBottomSheet, RoadTripPlanner, RoutePolyline, RouteSummary, RouteTimeline, NavigationMode, NearbyPlaces, PresetTrips, PresetRoutePolylines
 │   │   ├── gallery/          # GalleryGrid
 │   │   ├── seo/              # SEO.jsx (react-helmet-async wrapper)
 │   │   └── ui/               # AnimatedSection, SectionTitle, Badge, SearchBar, Logo, SimilarPlaces, ScrollToTop
@@ -110,8 +110,11 @@ Defined in `src/App.jsx`. All routes are nested under `<Layout />` (Navbar + Foo
 | `/gallery` | `Gallery` | Masonry image grid with lightbox |
 | `/advertise` | `Advertise` | Multi-step form for business listings (WhatsApp submission) |
 | `/unsubscribe` | `Unsubscribe` | Newsletter unsubscribe confirmation page |
-| `/privacy-policy` | `PrivacyPolicy` | Privacy policy (placeholder) |
-| `/terms-of-service` | `TermsOfService` | Terms of service (placeholder) |
+| `/privacy-policy` | `PrivacyPolicy` | Privacy policy (16 sections, fully audited) |
+| `/terms-of-service` | `TermsOfService` | Terms of service (13 sections) |
+| `/business-terms` | `BusinessTerms` | Business listing terms — claims, removals, curated listings |
+| `/cookie-policy` | `CookiePolicy` | Cookie policy — 4 cookie tables, all third-party services |
+| `/disclaimer` | `Disclaimer` | Disclaimer — travel advice, listings, links, liability |
 | `*` | `NotFound` | 404 page |
 
 ---
@@ -184,10 +187,9 @@ Defined in `src/App.jsx`. All routes are nested under `<Layout />` (Navbar + Foo
 - Deep-linking via `?item=<id>` and `?trip=id1,id2` query params
 - **Places / Trip Planner tabs** on all devices:
   - **Desktop left sidebar** (`hidden md:flex`, 340px): Two tabs — "Places" (count badge) and "Trip Planner"
-  - **Mobile bottom sheet** (`md:hidden`): Same tabs with animated height (50vh for Places, 75vh for Planner)
+  - **Mobile draggable bottom sheet** (`md:hidden`): `DraggableBottomSheet` with 3 snap points — Peek (80px handle), Half (45vh), Full (90vh). Drag via handle bar, auto-collapses on map drag
   - **MapSidePanel detail panel** (desktop right, mobile bottom sheet): When a place is selected, shows "Places" and "Trip Planner" tabs
-- Compass button opens sidebar on Trip Planner tab
-- "Show list" floating button opens sidebar on Places tab
+- Map controls auto-hide when bottom sheet is expanded on mobile
 - Geolocation support (auto-locate on first visit)
 - Business cards include "Show on Map" button
 - Smooth zoom with Google Maps-style zoom-out button (`flyTo` animation)
@@ -266,6 +268,7 @@ All content is static data in `src/data/`. To add new items, append objects to t
 | `duration` | string | No | e.g. `"3–5 hours"`, `"Full day"` |
 | `coordinates` | object | No | `{ lat, lng }` — enables map button + distance calc |
 | `googleMapsLink` | string | No | Direct Google Maps URL |
+| `clDistance` | number | No | Pre-calculated distance from Colombo in km |
 
 ### sriLankaPride.js
 
@@ -317,6 +320,7 @@ All content is static data in `src/data/`. To add new items, append objects to t
 | `website` | string | No | Website URL |
 | `googleMapsLink` | string | No | Google Maps URL |
 | `social` | object | No | `{ facebook, instagram, youtube }` |
+| `expiresAt` | string | No | Expiry date for paid tiers (e.g. `"2027-07-21"`). Empty string for standard. Used by `getEffectiveTier()` to auto-downgrade expired paid listings to standard |
 
 ### gallery.js
 
@@ -367,7 +371,8 @@ Use this file as a quick reference when adding new entries to any data file.
 - Full-screen Leaflet map with clustered markers
 - 5 layer toggles: Destinations, Beaches, Discover more (businesses), Cultural (pride), Preset Routes, Preset Routes
 - 11 quick-filter buttons for quick category access
-- **Places / Trip Planner tabs** on all devices (mobile bottom sheet, desktop sidebar, detail panel)
+- **Places / Trip Planner tabs** on all devices (mobile draggable bottom sheet, desktop sidebar, detail panel)
+- **DraggableBottomSheet** — handle-only drag gesture with 3 snap points (Peek 80px, Half 45vh, Full 90vh), spring animations, auto-collapses on map drag (`dragstart` event only, not `movestart`)
 - Side panel (desktop) / bottom sheet (mobile)
 - Fly-to animation on place selection
 - Smooth zoom with Google Maps-style zoom-out button
@@ -389,7 +394,7 @@ Use this file as a quick reference when adding new entries to any data file.
 - Auto-zoom to fit route bounds
 - Route summary with distance, duration, and day count
 - **TripPlannerPanel**: Plan/Presets sub-tabs, SearchInput with 48px touch targets, NearbyPlaces
-- Mobile-optimized bottom sheet UI with animated height (50vh Places → 75vh Planner)
+- Mobile: content renders inside DraggableBottomSheet; Desktop: sidebar planner panel
 
 ### PWA
 - Install prompt via `beforeinstallprompt` event
@@ -417,6 +422,9 @@ Each page sets: title, description, canonical, keywords, OG tags (title, descrip
 | Unsubscribe | `"Unsubscribe"` | `/images/home/hero.png` | `website` | — (noindex) |
 | Privacy Policy | `"Privacy Policy"` | `/images/home/hero.png` | `website` | — |
 | Terms of Service | `"Terms of Service"` | `/images/home/hero.png` | `website` | — |
+| Business Terms | `"Business Terms"` | `/images/home/hero.png` | `website` | — |
+| Cookie Policy | `"Cookie Policy"` | `/images/home/hero.png` | `website` | — |
+| Disclaimer | `"Disclaimer"` | `/images/home/hero.png` | `website` | — |
 | 404 | `"Page Not Found"` | fallback | `website` | — |
 
 #### Global structured data (`index.html`)
@@ -433,6 +441,10 @@ Build script generates static HTML files for every destination, pride item, AND 
 - `/map` — `hero.png` OG image
 - `/privacy-policy` — `hero.png` OG image
 - `/terms-of-service` — `hero.png` OG image
+- `/business-terms` — `hero.png` OG image
+- `/cookie-policy` — `hero.png` OG image
+- `/disclaimer` — `hero.png` OG image
+- `/unsubscribe` — `hero.png` OG image
 - `/destinations/:category/:id` — item-specific OG image (external URLs)
 - `/sri-lanka-pride/:category/:id` — item-specific OG image (external URLs)
 
@@ -440,7 +452,7 @@ Build script generates static HTML files for every destination, pride item, AND 
 
 #### Other SEO files
 - `robots.txt` — allows all crawlers including AI bots (GPTBot, Claude-Web, PerplexityBot, etc.)
-- `sitemap.xml` — auto-generated (231 URLs) via `scripts/generate-sitemap.js`
+- `sitemap.xml` — auto-generated (237 URLs) via `scripts/generate-sitemap.js`
 - `ai.txt` — explicit AI crawler permissions
 - `llms.txt` — LLM-friendly site summary for AI assistants
 - Google Search Console verified
@@ -549,6 +561,22 @@ function doPost(e) {
 - **Back buttons** — Detail pages include "Back to [Parent]" navigation
 - **Footer links** — Quick navigation to all main sections + 6 random destinations from `destinations.js` (refreshes each page load)
 
+### Curated Free Listings
+- Eastory SL can list businesses from public data (Google ratings etc.) without prior consent
+- Generates no revenue — businesses are listed to help travellers discover them
+- Featured/Premium businesses can claim or request removal via Business Terms
+- `expiresAt` field on paid tiers auto-downgrades to standard when expired
+- `getEffectiveTier(item)` helper in `mapHelpers.js` determines effective tier considering expiry
+- Backward compatible: entries without `expiresAt` are always active
+
+### Legal Pages (6 pages)
+- **Privacy Policy** (`/privacy-policy`) — 16 sections covering data collection, GA4, third-party services, user rights
+- **Terms of Service** (`/terms-of-service`) — 13 sections covering acceptable use, content, termination, liability
+- **Business Terms** (`/business-terms`) — Listing policies, claims, removal procedures, Curated Free Listings
+- **Cookie Policy** (`/cookie-policy`) — 10 sections with 4 cookie tables (essential/analytics/functionality/CDN), all third-party services disclosed
+- **Disclaimer** (`/disclaimer`) — 11 sections covering travel advice, business listings, external links, maps, liability
+- All 6 pages cross-linked in bottom navigation of each page
+
 ---
 
 ## Getting Started
@@ -615,7 +643,7 @@ If `VITE_SITE_URL` is unset, the app falls back to `https://eastorysl.netlify.ap
 
 The `netlify.toml` handles:
 
-- **Security headers** — X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Strict-Transport-Security, X-XSS-Protection, Permissions-Policy
+- **Security headers** — X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Strict-Transport-Security, Content-Security-Policy, Permissions-Policy
 - **Static file redirects** — sitemap.xml, robots.txt, ai.txt, llms.txt served as-is
 - **SPA catch-all** — `/* → /index.html` (must be last)
 - **Asset caching** — `/assets/*` gets 1-year immutable cache
@@ -774,6 +802,44 @@ The `netlify.toml` handles:
 - **Trip plan text fix** — Fixed `Day undefined` bug: `generateItinerary()` returns arrays of arrays `[[stops]]`, not objects with `.dayNumber`
 - **Button sizes reduced** — NearbyPlaces "+" and RouteTimeline "x" remove buttons reduced from 44px to 28px
 - **Route remove button alignment** — Removed awkward `mt-[-6px]`, replaced with `self-center` for proper vertical alignment
+
+### v1.0.0-pre.5 Comprehensive Codebase Audit
+- **HIGH: DestinationCard broken Google Maps link** — `coordinates.lat`/`.lng` accessed as object properties but coordinates are `{ lat, lng }` objects. The `.lat`/`.lng` access was correct but the audit flagged a potential array format issue. Verified all data files use `{ lat, lng }` objects consistently. Added defensive `Array.isArray()` check as fallback
+- **HIGH: BusinessCard same coordinates issue** — Same fix applied to BusinessCard directions link
+- **HIGH: GalleryGrid setState inside useMemo** — `setSelectedImage(null)` was called inside a `useMemo` callback (React anti-pattern). Moved to a separate `useEffect` that checks `currentIndex === -1`
+- **MEDIUM: Map page missing `<h1>`** — Added visually hidden `<h1>Sri Lanka Interactive Map</h1>` for SEO/accessibility
+- **MEDIUM: MapPlaceList `<h1>` → `<h2>`** — Changed "Places" heading from `<h1>` to `<h2>` to avoid multiple `<h1>` tags on map page
+- **MEDIUM: Hero background images empty alt** — Gallery, Destinations, and SriLankaPride hero background images now have descriptive alt text for SEO
+- **MEDIUM: netlify.toml security headers** — Removed deprecated `X-XSS-Protection` header, added comprehensive `Content-Security-Policy` header, added `payment=()` to Permissions-Policy
+- **MEDIUM: netlify.toml identity redirects removed** — Removed unnecessary identity redirects for sitemap.xml, robots.txt, ai.txt, llms.txt (Netlify serves static files from `public/` by default)
+- **LOW: DestinationCard static objects hoisted** — `categoryColors` and `tierConfig` moved outside component to avoid re-creation on every render
+- **LOW: PrideCard dev mode warning** — Unknown categories now log a console warning in development mode instead of silently falling back to ancient-kingdoms styling
+- **SEO: schema.js updated** — Added missing `clDistance` field to DESTINATIONS_SCHEMA, fixed section numbering (was 1,2,3,5,4 → now 1,2,3,4,5)
+- **SEO: README.md updated** — Fixed sitemap URL count (237), added `clDistance` to destinations field table, updated security headers description
+
+### v1.0.0-pre.4 Legal Pages & Business Terms Audit
+- **Created Business Terms page** (`/business-terms`) — listing policies, claims, removal procedures, Curated Free Listings section
+- **Created Cookie Policy page** (`/cookie-policy`) — 10 sections, 4 cookie tables, all third-party services disclosed
+- **Created Disclaimer page** (`/disclaimer`) — 11 sections covering travel advice, listings, links, liability
+- **Created Unsubscribe page** (`/unsubscribe`) — working unsubscribe via Google Apps Script
+- **All 6 legal pages cross-linked** in bottom navigation of each page
+- **Comprehensive audit of all 6 legal pages** — removed 9 false claims: "other users" (no accounts), "via email" (no email system), age claim, dedup logic softened, 12-month expiry removed, payment clarified as manual WhatsApp, rankings/bot protection removed
+- **Featured Plan description updated** — "homepage visibility" → "a dedicated single page website linked from your listing (without SEO optimisation)"
+- **Advertise feature matrix updated** — "Homepage Feature" → "Single Page Website"; removed false "12 months" claim
+- **Refund policy rewritten** — "we will arrange a refund via WhatsApp" → "we will inform you via WhatsApp and arrange a refund"
+- **`getEffectiveTier(item)` helper** — determines effective tier considering `expiresAt` expiry; backward compatible
+- **`expiresAt` field added to ALL businesses** — standard = `''`, featured/premium = `'2027-07-21'`
+- **DestinationDetail & MapPlaceList** — badges and sorting now use `getEffectiveTier()` instead of raw `item.tier`
+- **Sitemap generator updated** — now includes all 6 legal pages (was missing privacy-policy, terms-of-service, business-terms, cookie-policy, disclaimer, unsubscribe)
+- **OG page generator updated** — now generates OG pages for all 6 legal pages
+
+### DraggableBottomSheet Fixes
+- **CRITICAL: Velocity direction inverted** — `snapToNearest` had reversed flick logic: flicking DOWN (positive velocity) snapped toward Full instead of Peek. Fixed `++`/`--` so down = lower index, up = higher index
+- **CRITICAL: `touch-action: none` blocked native scroll** — Parent `motion.div` had `touch-action: none` which, per W3C spec, made the effective touch-action `none` for all descendants (intersection of ancestor values). Inner scroll containers never scrolled on touch devices. Removed entirely — JS handlers control all drag behavior
+- **HIGH: Drag-from-body scroll isolation broken** — `handlePointerDown` second boundary condition blocked drag start at scroll top (`!atBottom && rect.bottom - e.clientY > 10` true for most touch positions). Removed all scroll-boundary logic — drag now only starts from handle bar (standard Material Design bottom sheet pattern)
+- **HIGH: `e.preventDefault()` ignored on window listener** — `window.addEventListener('pointermove', onMove)` added without `{ passive: false }`, so `preventDefault()` was silently ignored in some browsers. Added explicit `{ passive: false }` option
+- **MEDIUM: Visible scrollbar on mobile** — Added `no-scrollbar` utility class to scroll container
+- **LOW: Inline `onSelect` duplicated logic** — Mobile `MapPlaceList` had inline function copying `handleSelectItem` logic, allocating new function every render. Replaced with callback reference
 
 ### Pre-release Audit Fixes
 - **Route code splitting** — All 13 page components now use `React.lazy()` + `Suspense` for route-level code splitting. Initial JS bundle dropped from single 1.3MB chunk to 623KB shared + per-page lazy chunks (Map: 287KB, Home: 50KB, etc.)

@@ -31,8 +31,8 @@ export default function SEO({ title, description, ogImage, ogUrl, ogType, keywor
       {description && <meta property="og:description" content={description} />}
       <meta property="og:url" content={url} />
       <meta property="og:image" content={image} />
-      <meta property="og:image:width" content={ogImageWidth} />
-      <meta property="og:image:height" content={ogImageHeight} />
+      <meta property="og:image:width" content={String(ogImageWidth)} />
+      <meta property="og:image:height" content={String(ogImageHeight)} />
       <meta property="og:image:alt" content={imageAlt} />
       <meta property="og:image:type" content={ogImageType(image)} />
       <meta property="og:site_name" content={SITE_NAME} />

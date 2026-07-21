@@ -4,24 +4,23 @@ import { FiMapPin, FiClock, FiDollarSign, FiSun, FiAward, FiNavigation } from 'r
 import Badge from '../ui/Badge'
 import { handleImgError } from '../../utils/fallback'
 
+const categoryColors = {
+  religious: { badge: 'featured' },
+  historical: { badge: 'premium' },
+  nature: { badge: 'new' },
+  beaches: { badge: 'free' },
+  cultural: { badge: 'featured' },
+}
+
+const tierConfig = {
+  premium: { badge: 'premium', label: 'Premium Pick' },
+  featured: { badge: 'featured', label: 'Featured' },
+  standard: { badge: 'free', label: '' },
+  free: { badge: 'free', label: '' },
+}
+
 export default function DestinationCard({ destination, index }) {
   const navigate = useNavigate()
-
-  const categoryColors = {
-    religious: { badge: 'featured' },
-    historical: { badge: 'premium' },
-    nature: { badge: 'new' },
-    beaches: { badge: 'free' },
-    cultural: { badge: 'featured' },
-  }
-
-  const tierConfig = {
-    premium: { badge: 'premium', label: 'Premium Pick' },
-    featured: { badge: 'featured', label: 'Featured' },
-    standard: { badge: 'free', label: '' },
-    free: { badge: 'free', label: '' },
-  }
-
   const tier = tierConfig[destination.tier] || tierConfig.free
 
   function handleCardClick(e) {
@@ -41,13 +40,13 @@ export default function DestinationCard({ destination, index }) {
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-50px' }}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
+      transition={{ duration: 0.5, delay: Math.min(index * 0.1, 0.5) }}
       onClick={handleCardClick}
       onKeyDown={handleCardKeyDown}
       tabIndex={0}
       role="button"
       aria-label={`View details for ${destination.name}`}
-      className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-slate-100 italic cursor-pointer"
+      className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-slate-100 cursor-pointer"
     >
       <div className="relative overflow-hidden h-48 sm:h-56">
         <img
@@ -79,14 +78,14 @@ export default function DestinationCard({ destination, index }) {
           </h3>
         </div>
       </div>
-      <div className="p-5">
-        <p className="text-slate-600 text-sm leading-relaxed mb-4 truncate">
+      <div className="p-4">
+        <p className="text-slate-600 text-sm leading-relaxed mb-4 line-clamp-2">
           {destination.description}
         </p>
         <div className="flex items-center justify-between gap-2 text-xs text-slate-500 mb-4">
           <div className="flex items-center gap-3">
             {destination.district && (
-              <span className="flex items-center gap-1 text-slate-400">
+              <span className="flex items-center gap-1 text-slate-500">
                 <FiMapPin className="text-teal-500" />
                 {destination.district} District
               </span>
@@ -112,7 +111,7 @@ export default function DestinationCard({ destination, index }) {
             {destination.bestTime && (
               <div className="flex items-center gap-2 text-xs">
                 <FiSun className="text-amber-500" />
-                <span className="text-slate-400">Best time: </span>
+                <span className="text-slate-500">Best time: </span>
                 <span className="font-medium text-teal-700">{destination.bestTime}</span>
               </div>
             )}
@@ -120,10 +119,11 @@ export default function DestinationCard({ destination, index }) {
               <button
                 onClick={(e) => {
                   e.stopPropagation()
-                  const clat = destination.coordinates?.lat; const clng = destination.coordinates?.lng
+                  const clat = Array.isArray(destination.coordinates) ? destination.coordinates[0] : destination.coordinates?.lat
+                  const clng = Array.isArray(destination.coordinates) ? destination.coordinates[1] : destination.coordinates?.lng
                   window.open(destination.googleMapsLink || `https://www.google.com/maps/dir/?api=1&destination=${clat},${clng}`, '_blank', 'noopener,noreferrer')
                 }}
-                className="inline-flex items-center justify-center gap-2 w-full min-h-[48px] px-4 py-2.5 rounded-xl bg-gradient-to-r from-teal-500 to-ocean-600 text-white text-sm font-semibold shadow-lg shadow-teal-500/20 hover:shadow-teal-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300"
+                className="inline-flex items-center justify-center gap-2 w-full min-h-[48px] px-4 py-2.5 rounded-xl bg-gradient-to-r from-teal-500 to-ocean-600 text-white text-sm font-semibold shadow-lg shadow-teal-500/20 hover:shadow-teal-500/40 active:scale-[0.98] transition-all duration-300"
               >
                 <FiNavigation className="text-sm" />
                 Get Directions

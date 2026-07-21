@@ -36,7 +36,7 @@ export default function NotFound() {
               Back to Home
             </Link>
             <button
-              onClick={() => window.history.back()}
+              onClick={() => { if (window.history.length > 1) window.history.back(); else window.location.href = '/' }}
               className="inline-flex items-center gap-2 px-6 py-3 min-h-[44px] bg-white hover:bg-slate-50 text-slate-700 font-semibold rounded-xl border border-slate-200 transition-all duration-300 shadow-sm"
             >
               <FiArrowLeft className="text-lg" />

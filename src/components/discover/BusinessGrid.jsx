@@ -56,6 +56,7 @@ function CtaCard() {
 
 export default function BusinessGrid({ businesses }) {
   const sorted = useMemo(() => {
+    if (!businesses) return []
     return [...businesses].sort((a, b) => (tierOrder[a.tier] ?? 2) - (tierOrder[b.tier] ?? 2))
   }, [businesses])
 
