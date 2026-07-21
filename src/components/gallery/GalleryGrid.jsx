@@ -27,14 +27,13 @@ export default function GalleryGrid({ images, initialItem, showAllLink }) {
 
   const currentIndex = useMemo(() => {
     if (!selectedImage) return -1
-    return filtered.findIndex((img) => img.id === selectedImage.id)
-  }, [filtered, selectedImage])
-
-  useEffect(() => {
-    if (selectedImage && currentIndex === -1) {
+    const idx = filtered.findIndex((img) => img.id === selectedImage.id)
+    if (idx === -1) {
       setSelectedImage(null)
+      return -1
     }
-  }, [selectedImage, currentIndex])
+    return idx
+  }, [filtered, selectedImage])
 
   useEffect(() => {
     if (!selectedImage) return
@@ -83,7 +82,7 @@ export default function GalleryGrid({ images, initialItem, showAllLink }) {
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by name, category, or location..."
             aria-label="Search gallery photos"
-            className="w-full pl-12 pr-4 py-3.5 min-h-[44px] rounded-xl bg-white border border-slate-200 text-sm text-slate-800 placeholder:text-slate-400 italic outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-400 transition-all"
+            className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-white border border-slate-200 text-sm text-slate-800 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-400 transition-all"
           />
         </div>
       )}

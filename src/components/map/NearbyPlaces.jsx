@@ -20,10 +20,8 @@ function formatDist(meters) {
   return `${(meters / 1000).toFixed(1)} km`
 }
 
-export default function NearbyPlaces({ places, onSelectPlace, onAddToRoute, isExpanded: externalExpanded, onToggleExpand }) {
-  const [internalExpanded, setInternalExpanded] = useState(false)
-  const isExpanded = externalExpanded !== undefined ? externalExpanded : internalExpanded
-  const toggleExpand = onToggleExpand || (() => setInternalExpanded(prev => !prev))
+export default function NearbyPlaces({ places, onSelectPlace, onAddToRoute }) {
+  const [isExpanded, setIsExpanded] = useState(true)
   const [activeFilter, setActiveFilter] = useState('All')
 
   const categories = useMemo(() => {
@@ -43,7 +41,7 @@ export default function NearbyPlaces({ places, onSelectPlace, onAddToRoute, isEx
   return (
     <div className="bg-white rounded-xl border border-slate-100 overflow-hidden">
         <button
-          onClick={() => toggleExpand()}
+          onClick={() => setIsExpanded(!isExpanded)}
           aria-expanded={isExpanded}
           className="w-full flex items-center justify-between px-4 py-3 min-h-[44px] hover:bg-slate-50 transition-colors"
         >
@@ -73,7 +71,7 @@ export default function NearbyPlaces({ places, onSelectPlace, onAddToRoute, isEx
                 <button
                   key={cat}
                   onClick={() => setActiveFilter(cat)}
-                  className={`px-2.5 py-1 rounded-full text-[10px] font-semibold font-['Poppins'] whitespace-nowrap transition-all ${
+                  className={`px-2.5 py-1 rounded-full text-[10px] font-semibold whitespace-nowrap transition-all ${
                     activeFilter === cat
                       ? 'bg-teal-500 text-white'
                       : 'bg-slate-100 text-slate-500 hover:bg-slate-200'

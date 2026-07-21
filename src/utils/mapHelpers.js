@@ -151,9 +151,3 @@ export function shuffle(arr) {
   }
   return a
 }
-
-export function getEffectiveTier(item) {
-  if (!item.tier || item.tier === 'standard' || item.tier === 'free') return 'standard'
-  if (!item.expiresAt) return item.tier
-  return new Date(item.expiresAt) > new Date() ? item.tier : 'standard'
-}

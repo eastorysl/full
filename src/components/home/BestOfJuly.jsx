@@ -256,7 +256,7 @@ export default function BestOfJuly() {
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
-              className={`px-4 py-2.5 min-h-[44px] rounded-xl text-sm font-bold font-['Poppins'] transition-all duration-300 whitespace-nowrap shrink-0 lg:whitespace-normal lg:shrink ${
+              className={`px-4 py-2.5 min-h-[44px] rounded-xl text-sm font-bold font-body transition-all duration-300 whitespace-nowrap shrink-0 lg:whitespace-normal lg:shrink ${
                 activeCategory === cat
                   ? 'bg-gradient-to-r from-teal-600 to-teal-500 text-white shadow-lg shadow-teal-500/30'
                   : 'bg-white text-slate-600 border border-slate-200 hover:border-teal-300 hover:text-teal-600 hover:shadow-md'

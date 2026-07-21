@@ -4,23 +4,24 @@ import { FiMapPin, FiClock, FiDollarSign, FiSun, FiAward, FiNavigation } from 'r
 import Badge from '../ui/Badge'
 import { handleImgError } from '../../utils/fallback'
 
-const categoryColors = {
-  religious: { badge: 'featured' },
-  historical: { badge: 'premium' },
-  nature: { badge: 'new' },
-  beaches: { badge: 'free' },
-  cultural: { badge: 'featured' },
-}
-
-const tierConfig = {
-  premium: { badge: 'premium', label: 'Premium Pick' },
-  featured: { badge: 'featured', label: 'Featured' },
-  standard: { badge: 'free', label: '' },
-  free: { badge: 'free', label: '' },
-}
-
 export default function DestinationCard({ destination, index }) {
   const navigate = useNavigate()
+
+  const categoryColors = {
+    religious: { badge: 'featured' },
+    historical: { badge: 'premium' },
+    nature: { badge: 'new' },
+    beaches: { badge: 'free' },
+    cultural: { badge: 'featured' },
+  }
+
+  const tierConfig = {
+    premium: { badge: 'premium', label: 'Premium Pick' },
+    featured: { badge: 'featured', label: 'Featured' },
+    standard: { badge: 'free', label: '' },
+    free: { badge: 'free', label: '' },
+  }
+
   const tier = tierConfig[destination.tier] || tierConfig.free
 
   function handleCardClick(e) {
@@ -119,8 +120,7 @@ export default function DestinationCard({ destination, index }) {
               <button
                 onClick={(e) => {
                   e.stopPropagation()
-                  const clat = Array.isArray(destination.coordinates) ? destination.coordinates[0] : destination.coordinates?.lat
-                  const clng = Array.isArray(destination.coordinates) ? destination.coordinates[1] : destination.coordinates?.lng
+                  const clat = destination.coordinates?.lat; const clng = destination.coordinates?.lng
                   window.open(destination.googleMapsLink || `https://www.google.com/maps/dir/?api=1&destination=${clat},${clng}`, '_blank', 'noopener,noreferrer')
                 }}
                 className="inline-flex items-center justify-center gap-2 w-full min-h-[48px] px-4 py-2.5 rounded-xl bg-gradient-to-r from-teal-500 to-ocean-600 text-white text-sm font-semibold shadow-lg shadow-teal-500/20 hover:shadow-teal-500/40 active:scale-[0.98] transition-all duration-300"

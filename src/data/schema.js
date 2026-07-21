@@ -150,13 +150,6 @@ export const DESTINATIONS_SCHEMA = {
       description: "Google Maps short link.",
       example: "https://maps.app.goo.gl/DibkumdrbekmhgVs6",
     },
-    {
-      name: "clDistance",
-      type: "number",
-      required: false,
-      description: "Pre-calculated distance from Colombo in km. Used for sorting by proximity.",
-      example: 146,
-    },
   ],
 
   template: `{
@@ -471,13 +464,6 @@ export const BUSINESSES_SCHEMA = {
       options: ["premium", "standard", "featured"],
     },
     {
-      name: "expiresAt",
-      type: "string (ISO date)",
-      required: false,
-      description: "Expiry date for paid plans (featured/premium). When this date passes, the listing reverts to free plan visibility. Omit for free listings or listings that never expire.",
-      example: "2027-07-21",
-    },
-    {
       name: "rating",
       type: "number",
       required: false,
@@ -592,7 +578,7 @@ export const BUSINESSES_SCHEMA = {
 
 
 // ────────────────────────────────────────────────────────────
-//  4. PRESET TRIPS  (src/data/presetTrips.js)
+//  5. PRESET TRIPS  (src/data/presetTrips.js)
 // ────────────────────────────────────────────────────────────
 
 export const PRESET_TRIPS_SCHEMA = {
@@ -713,7 +699,7 @@ export const PRESET_TRIPS_SCHEMA = {
 
 
 // ────────────────────────────────────────────────────────────
-//  5. GALLERY  (src/data/gallery.js)
+//  4. GALLERY  (src/data/gallery.js)
 // ────────────────────────────────────────────────────────────
 
 export const GALLERY_SCHEMA = {

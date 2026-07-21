@@ -9,8 +9,8 @@
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Strict-Transport-Security = "max-age=31536000; includeSubDomains"
-    Permissions-Policy = "camera=(), microphone=(), geolocation=(self), payment=()"
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://unpkg.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com https://unpkg.com; img-src 'self' data: https: blob:; connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com https://*.googleapis.com https://*.gstatic.com https://*.tile.openstreetmap.org https://*.cartocdn.com https://router.project-osrm.org https://routing.openstreetmap.de https://api.emailjs.com https://script.google.com https://raw.githubusercontent.com; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'"
+    X-XSS-Protection = "1; mode=block"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(self)"
 
 [[headers]]
   for = "/assets/*"
@@ -37,6 +37,27 @@
   for = "/llms.txt"
   [headers.values]
     Cache-Control = "public, max-age=300, must-revalidate"
+
+# Static files — serve as-is, before SPA catch-all
+[[redirects]]
+  from = "/sitemap.xml"
+  to = "/sitemap.xml"
+  status = 200
+
+[[redirects]]
+  from = "/robots.txt"
+  to = "/robots.txt"
+  status = 200
+
+[[redirects]]
+  from = "/ai.txt"
+  to = "/ai.txt"
+  status = 200
+
+[[redirects]]
+  from = "/llms.txt"
+  to = "/llms.txt"
+  status = 200
 
 # SPA catch-all — must be last
 [[redirects]]

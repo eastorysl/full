@@ -62,14 +62,6 @@ export default defineConfig({
             },
           },
           {
-            urlPattern: /^https:\/\/[a-c]\.basemaps\.cartocdn\.com\/.*/i,
-            handler: 'StaleWhileRevalidate',
-            options: {
-              cacheName: 'carto-tiles-cache',
-              expiration: { maxEntries: 500, maxAgeSeconds: 60 * 60 * 24 * 30 },
-            },
-          },
-          {
             urlPattern: /^https:\/\/unpkg\.com\/.*/i,
             handler: 'StaleWhileRevalidate',
             options: {

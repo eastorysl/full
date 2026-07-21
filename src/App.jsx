@@ -15,9 +15,6 @@ const Gallery = lazy(() => import('./pages/Gallery'))
 const Advertise = lazy(() => import('./pages/Advertise'))
 const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'))
 const TermsOfService = lazy(() => import('./pages/TermsOfService'))
-const BusinessTerms = lazy(() => import('./pages/BusinessTerms'))
-const CookiePolicy = lazy(() => import('./pages/CookiePolicy'))
-const Disclaimer = lazy(() => import('./pages/Disclaimer'))
 const Unsubscribe = lazy(() => import('./pages/Unsubscribe'))
 const NotFound = lazy(() => import('./pages/NotFound'))
 
@@ -51,9 +48,6 @@ export default function App() {
             <Route path="advertise" element={<Advertise />} />
             <Route path="privacy-policy" element={<PrivacyPolicy />} />
             <Route path="terms-of-service" element={<TermsOfService />} />
-            <Route path="business-terms" element={<BusinessTerms />} />
-            <Route path="cookie-policy" element={<CookiePolicy />} />
-            <Route path="disclaimer" element={<Disclaimer />} />
             <Route path="unsubscribe" element={<Unsubscribe />} />
             <Route path="*" element={<NotFound />} />
           </Route>
