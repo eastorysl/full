@@ -188,12 +188,6 @@ function SeasonalFoodCard({ food, i }) {
                 </span>
               )}
             </div>
-            {food.location && (
-              <div className="flex items-center gap-1 text-xs text-slate-500 pt-2 border-t border-slate-100">
-                <FiMapPin className="text-teal-500" />
-                <span className="truncate">{food.location}</span>
-              </div>
-            )}
             <div className="mt-auto pt-3">
               <span className="flex items-center justify-center gap-2 w-full min-h-[44px] rounded-xl bg-gradient-to-r from-teal-500 to-ocean-600 text-white text-sm font-semibold shadow-md shadow-teal-500/20 group-hover:shadow-teal-500/40 transition-all duration-300">
                 View Details
@@ -214,34 +208,42 @@ export default function BestOfJuly() {
   const monthLabel = currentMonth
 
   const { places, foods, isDestFallback, isFoodFallback } = useMemo(() => {
-    let dests = getSeasonalDestinations(destinations, currentMonth, activeCategory).slice(0, 2)
+    const isAllFilter = activeCategory === 'All'
+    const destLimit = isAllFilter ? 2 : 3
+
+    const seasonalDests = getSeasonalDestinations(destinations, currentMonth, activeCategory)
+    let dests = shuffle(seasonalDests).slice(0, destLimit)
     let isDestFallback = false
     if (dests.length === 0) {
-      const fallbackPool = activeCategory === 'All'
+      const fallbackPool = isAllFilter
         ? destinations
         : destinations.filter(d => d.category === activeCategory.toLowerCase())
-      dests = getRandomItems(fallbackPool.length > 0 ? fallbackPool : destinations, 2)
+      dests = getRandomItems(fallbackPool.length > 0 ? fallbackPool : destinations, destLimit)
       isDestFallback = true
     }
 
-    let seasonalFoods = getSeasonalFoods(prideItems, currentMonth).slice(0, 1)
+    let seasonalFoods = []
     let isFoodFallback = false
-    if (seasonalFoods.length === 0) {
-      seasonalFoods = getRandomItems(prideItems, 1)
-      isFoodFallback = true
+    if (isAllFilter) {
+      const foodsPool = getSeasonalFoods(prideItems, currentMonth)
+      seasonalFoods = shuffle(foodsPool).slice(0, 1)
+      if (seasonalFoods.length === 0) {
+        seasonalFoods = getRandomItems(prideItems, 1)
+        isFoodFallback = true
+      }
     }
 
     return { places: dests, foods: seasonalFoods, isDestFallback, isFoodFallback }
   }, [currentMonth, activeCategory])
 
   return (
-    <section className="section-padding relative overflow-hidden bg-gradient-to-b from-white via-slate-50/50 to-slate-50">
-      <div className="absolute inset-0 opacity-[0.03]"
+    <section className="section-padding relative overflow-hidden bg-gradient-to-b from-teal-100/80 via-cyan-50/60 to-ocean-100/50">
+      <div className="absolute inset-0 opacity-[0.06]"
         style={{
           backgroundImage: 'radial-gradient(circle at 25% 25%, #0d9488 0%, transparent 50%), radial-gradient(circle at 75% 75%, #0284c7 0%, transparent 50%)',
         }}
       />
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-teal-200/40 to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-teal-400/60 to-transparent" />
 
       <div className="container-custom relative z-10">
         <SectionTitle

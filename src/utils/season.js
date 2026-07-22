@@ -1,11 +1,11 @@
 const fullMonthNames = {
-  jan: 'Jan', january: 'Jan', feb: 'Feb', february: 'Feb', mar: 'Mar', march: 'Mar',
-  apr: 'Apr', april: 'Apr', may: 'May', jun: 'Jun', june: 'Jun',
-  jul: 'Jul', july: 'Jul', aug: 'Aug', august: 'Aug', sep: 'Sep', september: 'Sep',
-  oct: 'Oct', october: 'Oct', nov: 'Nov', november: 'Nov', dec: 'Dec', december: 'Dec',
+  jan: 'January', january: 'January', feb: 'February', february: 'February', mar: 'March', march: 'March',
+  apr: 'April', april: 'April', may: 'May', jun: 'June', june: 'June',
+  jul: 'July', july: 'July', aug: 'August', august: 'August', sep: 'September', september: 'September',
+  oct: 'October', october: 'October', nov: 'November', november: 'November', dec: 'December', december: 'December',
 }
 
-const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
 export function monthName(n) {
   return monthNames[n - 1] || ''
