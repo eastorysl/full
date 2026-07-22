@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { FiChevronDown, FiChevronUp, FiNavigation, FiPlus } from 'react-icons/fi'
+import { FiChevronDown, FiChevronUp, FiPlus } from 'react-icons/fi'
 import { motion, AnimatePresence } from 'framer-motion'
 
 const CATEGORY_ICONS = {

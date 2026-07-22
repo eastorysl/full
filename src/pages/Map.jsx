@@ -369,6 +369,7 @@ export default function Map() {
       const c = toArrayCoords(stop.coordinates)
       if (c) setFlyToCoord(c)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rp.stops, rp.setActiveStopIndex])
 
   const handleSelectPlaceOnMap = useCallback((place) => {
@@ -380,12 +381,14 @@ export default function Map() {
 
   const handleAddNearbyToRoute = useCallback((place) => {
     rp.addStopAtOptimal(place)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rp.addStopAtOptimal])
 
   const handleReroute = useCallback(() => {
     if (rp.stops.length >= 2) {
       rp.generateRoute()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rp.stops, rp.generateRoute])
 
   const prevRouteGeoRef = useRef(null)
@@ -421,6 +424,7 @@ export default function Map() {
     setShowList(true)
     setSheetSnap(1)
     rp.generateRoute(presetStops)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rp.loadStopsByIds, rp.generateRoute])
 
   const plannerProps = useMemo(() => ({

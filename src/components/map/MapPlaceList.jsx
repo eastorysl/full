@@ -5,9 +5,13 @@ import { getCategoryClass, getCategoryLabel, getEffectiveTier } from '../../util
 import { handleImgError } from '../../utils/fallback'
 
 const CATEGORIES = [
-  'All', 'Beaches', 'Waterfalls', 'Mountains', 'Ancient Kingdoms',
-  'Religious Places', 'Hotels', 'Shopping',
-  'Museums', 'Wildlife', 'Parks',
+  'All', 'Beaches', 'Waterfalls', 'Mountains', 'Nature', 'Wildlife', 'Parks',
+  'Historical', 'Ancient Kingdoms', 'Forts', 'Religious Places', 'Cultural',
+  'Lakes & Rivers', 'Islands', 'Botanical Gardens', 'Viewpoints',
+  'Scenic Train Journeys', 'Marine Attractions', 'Adventure', 'Festivals & Events',
+  'Museums', 'Cities & Urban', 'Food & Culinary', 'Tea & Spice Trails',
+  'Famous People', 'Caves & Geology', 'Seasonal Foods',
+  'Hotels', 'Shopping', 'Restaurants',
 ]
 
 export default function MapPlaceList({ items, selectedItem, onSelect, searchQuery, onSearchChange, activeCategory, onCategoryChange, onClose, showHeader = true }) {

@@ -71,6 +71,8 @@ export default function useRoutePlanner(allData) {
     setStops(prev => prev.filter(s => s.id !== id))
   }, [])
 
+  const prevStopsLenRef = useRef(0)
+
   const clearStops = useCallback(() => {
     setStops([])
     setRouteGeometry(null)
@@ -80,6 +82,7 @@ export default function useRoutePlanner(allData) {
     setNearbyPlaces([])
     setActiveStopIndex(null)
     setRouteError(null)
+    prevStopsLenRef.current = 0
   }, [])
 
   const reorderStop = useCallback((fromIndex, toIndex) => {
@@ -104,6 +107,7 @@ export default function useRoutePlanner(allData) {
       setNearbyPlaces([])
       setRouteError(null)
       setActiveStopIndex(null)
+      prevStopsLenRef.current = presetStops.length
       setStops(presetStops)
     }
   }, [])
@@ -179,6 +183,9 @@ export default function useRoutePlanner(allData) {
     generateRoute(reordered)
   }, [generateRoute])
 
+  const optimizeStopsRef = useRef(optimizeStops)
+  optimizeStopsRef.current = optimizeStops
+
   const startNavigation = useCallback(() => {
     if (!navigator.geolocation) return
 
@@ -223,16 +230,15 @@ export default function useRoutePlanner(allData) {
     }
   }, [stops.length, activeStopIndex])
 
-  const prevStopsLenRef = useRef(0)
   useEffect(() => {
     const prevLen = prevStopsLenRef.current
     const currLen = stops.length
     prevStopsLenRef.current = currLen
     if (currLen >= 2 && currLen > prevLen) {
-      const timer = setTimeout(() => optimizeStops(), 150)
+      const timer = setTimeout(() => optimizeStopsRef.current(), 150)
       return () => clearTimeout(timer)
     }
-  }, [stops.length, optimizeStops])
+  }, [stops.length])
 
   const stopCoords = useMemo(() =>
     stops.map(getCoordArray).filter(Boolean),

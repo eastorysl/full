@@ -1,7 +1,7 @@
 import { useState, useMemo, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { FiSearch, FiX, FiMap, FiArrowRight, FiMapPin } from 'react-icons/fi'
+import { FiX, FiMap, FiArrowRight, FiMapPin } from 'react-icons/fi'
 import { destinations } from '../../data/destinations'
 import { businesses } from '../../data/businesses'
 import { prideItems } from '../../data/sriLankaPride'

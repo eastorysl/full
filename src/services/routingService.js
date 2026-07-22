@@ -137,7 +137,6 @@ async function fetchRoute(coords, options = {}) {
     return routeCache.get(cacheKey)
   }
 
-  const provider = PROVIDERS[activeProvider]
   const { overview = 'full', geometries = 'geojson', steps = true } = options
 
   let lastError = null
@@ -282,12 +281,6 @@ function findNearbyPlaces(routeCoords, places, maxDistanceKm = 5) {
     })
     .filter(p => p.distanceToRoute <= maxDistMeters)
     .sort((a, b) => a.distanceToRoute - b.distanceToRoute)
-}
-
-function sampleRoutePoints(coords, count) {
-  if (coords.length <= count) return coords
-  const step = Math.floor(coords.length / count)
-  return Array.from({ length: count }, (_, i) => coords[Math.min(i * step, coords.length - 1)])
 }
 
 function haversineDistance(lat1, lng1, lat2, lng2) {

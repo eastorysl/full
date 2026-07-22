@@ -7,7 +7,7 @@ function fallbackSVG(name) {
 }
 
 export function handleImgError(e) {
-  const fallback = `data:image/svg+xml,${encodeURIComponent(fallbackSVG(e.target.alt))}`
-  if (e.target.src === fallback) return
-  e.target.src = fallback
+  if (e.target.dataset.fb) return
+  e.target.dataset.fb = '1'
+  e.target.src = `data:image/svg+xml,${encodeURIComponent(fallbackSVG(e.target.alt))}`
 }

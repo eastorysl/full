@@ -1,8 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { FiMapPin, FiClock, FiNavigation, FiRefreshCw, FiCalendar, FiShare2, FiChevronDown, FiSend, FiCopy, FiDownload, FiCheck } from 'react-icons/fi'
 
-const statusTimerRef = { current: null }
-
 function buildTripText({ stops, formattedDistance, formattedDuration, itinerary, url }) {
   const lines = []
   lines.push('Sri Lanka Road Trip Plan')
@@ -44,6 +42,7 @@ export default function RouteSummary({ formattedDistance, formattedDuration, sto
   const [menuOpen, setMenuOpen] = useState(false)
   const [actionStatus, setActionStatus] = useState(null)
   const menuRef = useRef(null)
+  const statusTimerRef = useRef(null)
 
   useEffect(() => {
     if (!menuOpen) return

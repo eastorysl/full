@@ -1,7 +1,7 @@
 import { useParams, Link, useLocation } from 'react-router-dom'
 import { FiArrowLeft, FiMapPin, FiClock, FiDollarSign, FiSun, FiNavigation, FiAward, FiCamera, FiMap, FiShare2, FiHome } from 'react-icons/fi'
 import { motion } from 'framer-motion'
-import { useMemo } from 'react'
+
 import { destinations } from '../data/destinations'
 import { distanceFromColombo } from '../utils/distance'
 import SEO from '../components/seo/SEO'
@@ -37,7 +37,6 @@ export default function DestinationDetail() {
   const location = useLocation()
   const item = destinations.find((d) => d.id === id && d.category === category)
   const meta = catMeta[category] || { label: 'Destination', color: 'teal', gradient: 'from-teal-500 to-cyan-500' }
-  const effectiveTier = getEffectiveTier(item)
 
   const SITE_URL = import.meta.env.VITE_SITE_URL || 'https://eastorysl.netlify.app'
   const shareUrl = `${SITE_URL}${location.pathname}`
@@ -64,6 +63,8 @@ export default function DestinationDetail() {
       </div>
     )
   }
+
+  const effectiveTier = getEffectiveTier(item)
 
   const jsonLd = {
     '@context': 'https://schema.org',

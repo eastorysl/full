@@ -7,10 +7,12 @@ const STORAGE_KEY = 'eastorysl_pwa_dismissed'
 let _globalDeferredPrompt = null
 
 if (typeof window !== 'undefined') {
-  window.addEventListener('beforeinstallprompt', (e) => {
+  const handler = (e) => {
     e.preventDefault()
     _globalDeferredPrompt = e
-  })
+    window.removeEventListener('beforeinstallprompt', handler)
+  }
+  window.addEventListener('beforeinstallprompt', handler)
 }
 
 export default function usePWAInstall() {

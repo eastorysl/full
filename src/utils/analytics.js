@@ -1,7 +1,7 @@
-const GA_ID = import.meta.env.VITE_GA4_ID || 'G-9N173V8EG4'
+const GA_ID = import.meta.env.VITE_GA4_ID
 
 export function trackPageView(path, title) {
-  if (typeof window === 'undefined' || typeof window.gtag !== 'function') return
+  if (!GA_ID || typeof window === 'undefined' || typeof window.gtag !== 'function') return
   window.gtag('event', 'page_view', {
     page_path: path,
     page_location: window.location.href,
@@ -11,6 +11,6 @@ export function trackPageView(path, title) {
 }
 
 export function trackEvent(eventName, params = {}) {
-  if (typeof window === 'undefined' || typeof window.gtag !== 'function') return
+  if (!GA_ID || typeof window === 'undefined' || typeof window.gtag !== 'function') return
   window.gtag('event', eventName, { send_to: GA_ID, ...params })
 }

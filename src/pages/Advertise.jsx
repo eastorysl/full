@@ -543,7 +543,7 @@ function SubmitButton({ onSubmit, disabled }) {
 
 export default function Advertise() {
   const [step, setStep] = useState(1)
-  const [selected, setSelected] = useState('featured')
+  const [selected, setSelected] = useState('free')
   const topRef = useRef(null)
   const [formData, setFormData] = useState({
     businessName: '',

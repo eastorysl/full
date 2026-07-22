@@ -14,6 +14,8 @@ export default function TripPlanPolylines({ allData, isVisible, onLoadPreset }) 
   const [routes, setRoutes] = useState({})
   const successRef = useRef(new Set())
   const inflightRef = useRef(new Set())
+  const onLoadPresetRef = useRef(onLoadPreset)
+  onLoadPresetRef.current = onLoadPreset
 
   useEffect(() => {
     if (!isVisible) return
@@ -173,7 +175,7 @@ export default function TripPlanPolylines({ allData, isVisible, onLoadPreset }) 
           marker.on('click', () => {
             const bounds = L.latLngBounds(useCoords)
             map.fitBounds(bounds, { padding: [60, 60], maxZoom: 12, duration: 0.6 })
-            onLoadPreset?.(trip)
+        onLoadPresetRef.current?.(trip)
           })
 
           markersRef.current.push(marker)
@@ -187,7 +189,7 @@ export default function TripPlanPolylines({ allData, isVisible, onLoadPreset }) 
       markersRef.current.forEach((m) => map.removeLayer(m))
       markersRef.current = []
     }
-  }, [map, isVisible, routes, allData])
+  }, [map, isVisible, routes, allData, onLoadPreset])
 
   return null
 }

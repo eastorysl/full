@@ -41,7 +41,7 @@ export function sanitizeHTML(html) {
             child.setAttribute('target', '_blank')
           }
           const href = child.getAttribute('href') || ''
-          if (href.startsWith('javascript:')) {
+          if (/^(javascript|data|vbscript):/i.test(href)) {
             child.setAttribute('href', '#')
           }
         }

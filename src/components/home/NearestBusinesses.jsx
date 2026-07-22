@@ -175,7 +175,7 @@ export default function NearestBusinesses() {
             <p className="text-slate-500 text-sm mb-3">{locateError}</p>
             <button
               onClick={fetchLocation}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-teal-50 text-teal-700 text-sm font-semibold hover:bg-teal-100 transition-colors duration-200"
+              className="inline-flex items-center gap-2 px-5 py-2.5 min-h-[44px] rounded-xl bg-teal-50 text-teal-700 text-sm font-semibold hover:bg-teal-100 transition-colors duration-200"
             >
               <FiCrosshair className="text-sm" />
               Try Again
