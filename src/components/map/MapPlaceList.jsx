@@ -1,7 +1,7 @@
-import { useMemo, useRef, useEffect, useState } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { FiMapPin, FiSearch, FiX, FiChevronRight, FiChevronLeft } from 'react-icons/fi'
-import { getCategoryClass, getCategoryLabel, getEffectiveTier } from '../../utils/mapHelpers'
+import { getCategoryClass, getCategoryLabel } from '../../utils/mapHelpers'
 import { handleImgError } from '../../utils/fallback'
 
 const CATEGORIES = [
@@ -59,10 +59,7 @@ export default function MapPlaceList({ items, selectedItem, onSelect, searchQuer
     }
   }, [activeCategory])
 
-  const sorted = useMemo(() => {
-    const tierOrder = { premium: 0, featured: 1, standard: 2, free: 2 }
-    return [...items].sort((a, b) => (tierOrder[getEffectiveTier(a)] ?? 2) - (tierOrder[getEffectiveTier(b)] ?? 2))
-  }, [items])
+  const sorted = items
 
   return (
     <div className="h-full flex flex-col bg-white">

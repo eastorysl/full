@@ -224,7 +224,6 @@ export default function Footer() {
                 Get Listed Free
                 <FiArrowUp className="text-xs rotate-45 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
               </Link>
-            </div>
           </div>
         </div>
       </div>
@@ -235,16 +234,18 @@ export default function Footer() {
             <p className="text-slate-500 text-xs sm:text-sm text-center sm:text-left">
               © {new Date().getFullYear()} <span className="text-teal-400">EastorySL</span>. All rights reserved. Pearl of the Indian Ocean.
             </p>
-            <div className="flex items-center gap-6">
-              <Link to="/privacy-policy" className="text-slate-500 hover:text-teal-400 text-xs transition-colors">Privacy Policy</Link>
-              <span className="text-slate-700 text-xs">|</span>
-              <Link to="/terms-of-service" className="text-slate-500 hover:text-teal-400 text-xs transition-colors">Terms of Service</Link>
-              <span className="text-slate-700 text-xs">|</span>
-              <Link to="/business-terms" className="text-slate-500 hover:text-teal-400 text-xs transition-colors">Business Terms</Link>
-              <span className="text-slate-700 text-xs">|</span>
-              <Link to="/cookie-policy" className="text-slate-500 hover:text-teal-400 text-xs transition-colors">Cookie Policy</Link>
-              <span className="text-slate-700 text-xs">|</span>
-              <Link to="/disclaimer" className="text-slate-500 hover:text-teal-400 text-xs transition-colors">Disclaimer</Link>
+            <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-6">
+              <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+                <Link to="/privacy-policy" className="text-slate-500 hover:text-teal-400 text-xs transition-colors">Privacy Policy</Link>
+                <span className="text-slate-700 text-xs hidden sm:inline">|</span>
+                <Link to="/terms-of-service" className="text-slate-500 hover:text-teal-400 text-xs transition-colors">Terms of Service</Link>
+                <span className="text-slate-700 text-xs hidden sm:inline">|</span>
+                <Link to="/business-terms" className="text-slate-500 hover:text-teal-400 text-xs transition-colors">Business Terms</Link>
+                <span className="text-slate-700 text-xs hidden sm:inline">|</span>
+                <Link to="/cookie-policy" className="text-slate-500 hover:text-teal-400 text-xs transition-colors">Cookie Policy</Link>
+                <span className="text-slate-700 text-xs hidden sm:inline">|</span>
+                <Link to="/disclaimer" className="text-slate-500 hover:text-teal-400 text-xs transition-colors">Disclaimer</Link>
+              </div>
               <button
                 onClick={scrollToTop}
                 className="w-11 h-11 rounded-xl bg-slate-800 hover:bg-teal-600 flex items-center justify-center text-slate-400 hover:text-white transition-all duration-300 hover:shadow-lg hover:shadow-teal-500/20 hover:-translate-y-0.5"
@@ -253,6 +254,7 @@ export default function Footer() {
                 <FiArrowUp />
               </button>
             </div>
+          </div>
           </div>
         </div>
       </div>

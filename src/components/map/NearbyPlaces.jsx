@@ -23,7 +23,7 @@ function formatDist(meters) {
 export default function NearbyPlaces({ places, onSelectPlace, onAddToRoute, isExpanded: externalExpanded, onToggleExpand }) {
   const [internalExpanded, setInternalExpanded] = useState(false)
   const isExpanded = externalExpanded !== undefined ? externalExpanded : internalExpanded
-  const toggleExpand = onToggleExpand || (() => setInternalExpanded(prev => !prev))
+  const toggleExpand = onToggleExpand ? () => onToggleExpand(prev => !prev) : () => setInternalExpanded(prev => !prev)
   const [activeFilter, setActiveFilter] = useState('All')
 
   const categories = useMemo(() => {

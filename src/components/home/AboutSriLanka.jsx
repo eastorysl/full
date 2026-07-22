@@ -121,7 +121,7 @@ export default function AboutSriLanka() {
             )
           })}
         </div>
-        <div className="flex items-center justify-center gap-2 mt-6 md:hidden">
+        <div className="flex items-center justify-center gap-1.5 mt-5 md:hidden">
           {cards.map((_, i) => (
             <button
               key={i}
@@ -133,12 +133,10 @@ export default function AboutSriLanka() {
                 }
               }}
               aria-label={`Go to card ${i + 1}`}
-              className={`min-h-[44px] min-w-[44px] flex items-center justify-center rounded-full transition-all duration-300 ${
-                i === activeDot ? 'w-16 h-6' : 'w-11 h-11'
-              }`}
+              className="p-2.5 -m-1"
             >
               <span className={`block rounded-full transition-all duration-300 ${
-                i === activeDot ? 'w-6 h-2 bg-teal-400' : 'w-2 h-2 bg-white/30'
+                i === activeDot ? 'w-6 h-1.5 bg-teal-400' : 'w-1.5 h-1.5 bg-white/30'
               }`} />
             </button>
           ))}

@@ -23,6 +23,7 @@ import useRoutePlanner from '../hooks/useRoutePlanner'
 import { destinations } from '../data/destinations'
 import { businesses } from '../data/businesses'
 import { prideItems } from '../data/sriLankaPride'
+import { shuffle } from '../utils/mapHelpers'
 
 function toArrayCoords(c) {
   if (!c) return c
@@ -198,8 +199,10 @@ export default function Map() {
 
   const rp = useRoutePlanner(ALL_DATA)
 
+  const shuffledAllData = useMemo(() => shuffle(ALL_DATA), [])
+
   const filteredData = useMemo(() => {
-    let data = ALL_DATA.filter((item) => {
+    let data = shuffledAllData.filter((item) => {
       if (item._source === 'businesses') return activeLayers.businesses
       if (item._source === 'pride') return activeLayers.cultural
       if (item.category === 'beaches') return activeLayers.beaches
@@ -257,7 +260,7 @@ export default function Map() {
     }
 
     return data
-  }, [activeLayers, searchQuery, activeCategory])
+  }, [activeLayers, searchQuery, activeCategory, shuffledAllData])
 
   const handleToggleLayer = useCallback((id) => {
     setActiveLayers((prev) => ({ ...prev, [id]: !prev[id] }))

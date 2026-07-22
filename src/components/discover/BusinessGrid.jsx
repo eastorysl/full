@@ -4,8 +4,6 @@ import { motion } from 'framer-motion'
 import { FiTrendingUp, FiArrowRight, FiPlus } from 'react-icons/fi'
 import BusinessCard from './BusinessCard'
 
-const tierOrder = { premium: 0, featured: 1, free: 2 }
-
 function CtaCard() {
   return (
     <motion.div
@@ -57,7 +55,7 @@ function CtaCard() {
 export default function BusinessGrid({ businesses }) {
   const sorted = useMemo(() => {
     if (!businesses) return []
-    return [...businesses].sort((a, b) => (tierOrder[a.tier] ?? 2) - (tierOrder[b.tier] ?? 2))
+    return [...businesses]
   }, [businesses])
 
   const items = []
