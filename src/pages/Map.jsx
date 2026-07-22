@@ -2,7 +2,7 @@ import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import L from 'leaflet'
-import { FiMap, FiList, FiNavigation, FiMapPin, FiPlay, FiX } from 'react-icons/fi'
+import { FiMap, FiList, FiNavigation, FiMapPin, FiPlay } from 'react-icons/fi'
 import MapView from '../components/map/MapView'
 import MapLayers from '../components/map/MapLayers'
 import SEO from '../components/seo/SEO'
@@ -507,13 +507,6 @@ export default function Map() {
                       </button>
                     ))}
                   </div>
-                  <button
-                    onClick={() => setShowList(false)}
-                    className="touch-manipulation w-11 h-11 flex items-center justify-center text-slate-400 hover:text-red-500 transition-colors shrink-0"
-                    aria-label="Close panel"
-                  >
-                    <FiX className="text-sm" />
-                  </button>
                 </div>
 
                 {/* Tab Content */}
@@ -683,13 +676,6 @@ export default function Map() {
                 </button>
               ))}
             </div>
-            <button
-              onClick={() => setSheetSnap(0)}
-              className="touch-manipulation w-9 h-9 flex items-center justify-center text-slate-400 hover:text-red-500 transition-colors shrink-0"
-              aria-label="Collapse panel"
-            >
-              <FiX className="text-sm" />
-            </button>
           </div>
         )}
 
