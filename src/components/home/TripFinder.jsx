@@ -1,10 +1,11 @@
 import { useState, useMemo, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { FiX, FiMap, FiArrowRight, FiMapPin } from 'react-icons/fi'
+import { FiX, FiMap, FiArrowRight, FiMapPin, FiCrosshair } from 'react-icons/fi'
 import { destinations } from '../../data/destinations'
 import { businesses } from '../../data/businesses'
 import { prideItems } from '../../data/sriLankaPride'
+import useGeolocation from '../../hooks/useGeolocation'
 
 const ALL_DATA = [
   ...destinations,
@@ -12,7 +13,14 @@ const ALL_DATA = [
   ...prideItems.filter((p) => p.coordinates),
 ]
 
-function PlaceSearch({ value, onChange, placeholder, onSelect }) {
+const CURRENT_LOCATION_ITEM = {
+  id: '__current_location',
+  name: 'My Current Location',
+  location: 'Current Position',
+  coordinates: null,
+}
+
+function PlaceSearch({ value, onChange, placeholder, onSelect, showCurrentLocation, currentLocation }) {
   const [focused, setFocused] = useState(false)
   const [selected, setSelected] = useState(false)
   const timeoutRef = useRef(null)
@@ -22,16 +30,27 @@ function PlaceSearch({ value, onChange, placeholder, onSelect }) {
   }, [])
 
   const results = useMemo(() => {
-    if (!value || value.length < 2 || selected) return []
-    const q = value.toLowerCase()
-    return ALL_DATA
-      .filter((d) =>
-        d.name?.toLowerCase().includes(q) ||
-        d.location?.toLowerCase().includes(q) ||
-        d.district?.toLowerCase().includes(q)
-      )
-      .slice(0, 6)
-  }, [value, selected])
+    if (selected) return []
+    const items = []
+
+    if (showCurrentLocation && currentLocation && (!value || value.length < 2)) {
+      items.push({ ...CURRENT_LOCATION_ITEM, coordinates: currentLocation })
+    }
+
+    if (value && value.length >= 2) {
+      const q = value.toLowerCase()
+      const matches = ALL_DATA
+        .filter((d) =>
+          d.name?.toLowerCase().includes(q) ||
+          d.location?.toLowerCase().includes(q) ||
+          d.district?.toLowerCase().includes(q)
+        )
+        .slice(0, 6)
+      items.push(...matches)
+    }
+
+    return items.slice(0, 7)
+  }, [value, selected, showCurrentLocation, currentLocation])
 
   function handleChange(v) {
     setSelected(false)
@@ -65,19 +84,30 @@ function PlaceSearch({ value, onChange, placeholder, onSelect }) {
       </div>
       {focused && results.length > 0 && (
         <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-xl shadow-xl border border-slate-100 z-50 overflow-hidden max-h-56 overflow-y-auto">
-          {results.map((item) => (
-            <button
-              key={item.id}
-              onMouseDown={(e) => { e.preventDefault(); handleSelect(item) }}
-              className="w-full flex items-center gap-2.5 px-3 py-3 min-h-[48px] hover:bg-teal-50 transition-colors text-left"
-            >
-              <FiMap className="text-teal-500 text-xs shrink-0" />
-              <div className="min-w-0">
-                <p className="text-sm font-semibold text-slate-700 truncate">{item.name}</p>
-                <p className="text-[10px] text-slate-400 truncate">{item.location || item.district}</p>
-              </div>
-            </button>
-          ))}
+          {results.map((item) => {
+            const isCurrentLocation = item.id === '__current_location'
+            return (
+              <button
+                key={item.id}
+                onMouseDown={(e) => { e.preventDefault(); handleSelect(item) }}
+                className="w-full flex items-center gap-2.5 px-3 py-3 min-h-[48px] hover:bg-teal-50 transition-colors text-left"
+              >
+                {isCurrentLocation ? (
+                  <FiCrosshair className="text-teal-600 text-sm shrink-0" />
+                ) : (
+                  <FiMap className="text-teal-500 text-xs shrink-0" />
+                )}
+                <div className="min-w-0">
+                  <p className={`text-sm font-semibold truncate ${isCurrentLocation ? 'text-teal-700' : 'text-slate-700'}`}>
+                    {item.name}
+                  </p>
+                  <p className="text-[10px] text-slate-400 truncate">
+                    {isCurrentLocation ? 'Use GPS coordinates' : (item.location || item.district)}
+                  </p>
+                </div>
+              </button>
+            )
+          })}
         </div>
       )}
     </div>
@@ -86,10 +116,19 @@ function PlaceSearch({ value, onChange, placeholder, onSelect }) {
 
 export default function TripFinder() {
   const navigate = useNavigate()
+  const { location: userLocation } = useGeolocation()
   const [startVal, setStartVal] = useState('')
   const [endVal, setEndVal] = useState('')
   const [startSelected, setStartSelected] = useState(null)
   const [endSelected, setEndSelected] = useState(null)
+
+  useEffect(() => {
+    if (userLocation && !startSelected) {
+      const autoStart = { ...CURRENT_LOCATION_ITEM, coordinates: userLocation }
+      setStartSelected(autoStart)
+      setStartVal('My Current Location')
+    }
+  }, [userLocation, startSelected])
 
   function handleSelectStart(item) {
     setStartSelected(item)
@@ -103,7 +142,8 @@ export default function TripFinder() {
 
   function handleGenerate() {
     if (!startSelected || !endSelected) return
-    navigate(`/map?trip=${startSelected.id},${endSelected.id}`)
+    const ids = [startSelected.id, endSelected.id].join(',')
+    navigate(`/map?trip=${ids}`)
   }
 
   return (
@@ -132,6 +172,8 @@ export default function TripFinder() {
               onChange={(v) => { setStartVal(v); setStartSelected(null) }}
               placeholder="Start point..."
               onSelect={handleSelectStart}
+              showCurrentLocation
+              currentLocation={userLocation}
             />
             <div className="flex items-center justify-center">
               <div className="w-0.5 h-6 bg-gradient-to-b from-teal-400 to-ocean-500 rounded-full" />

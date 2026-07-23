@@ -1,9 +1,12 @@
 import { useParams, Link, useLocation } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 import { FiArrowLeft, FiMapPin, FiClock, FiDollarSign, FiSun, FiNavigation, FiAward, FiCamera, FiMap, FiShare2, FiHome } from 'react-icons/fi'
 import { motion } from 'framer-motion'
 
 import { destinations } from '../data/destinations'
 import { distanceFromColombo } from '../utils/distance'
+import { fetchRoute } from '../services/routingService'
+import useGeolocation from '../hooks/useGeolocation'
 import SEO from '../components/seo/SEO'
 import { handleImgError } from '../utils/fallback'
 import { sanitizeHTML } from '../utils/sanitize'
@@ -37,11 +40,27 @@ export default function DestinationDetail() {
   const location = useLocation()
   const item = destinations.find((d) => d.id === id && d.category === category)
   const meta = catMeta[category] || { label: 'Destination', color: 'teal', gradient: 'from-teal-500 to-cyan-500' }
+  const { location: userLocation } = useGeolocation()
+  const [roadDistanceKm, setRoadDistanceKm] = useState(null)
 
   const SITE_URL = import.meta.env.VITE_SITE_URL || 'https://eastorysl.netlify.app'
   const shareUrl = `${SITE_URL}${location.pathname}`
   const shareTitle = `Discover ${item?.name} in Sri Lanka`
   const shareText = item?.description || ''
+
+  useEffect(() => {
+    if (!userLocation || !item?.coordinates) return
+    let cancelled = false
+    fetchRoute([
+      [userLocation.lat, userLocation.lng],
+      [item.coordinates.lat, item.coordinates.lng],
+    ]).then((route) => {
+      if (!cancelled && route) {
+        setRoadDistanceKm(Math.round(route.distance / 1000))
+      }
+    }).catch(() => {})
+    return () => { cancelled = true }
+  }, [userLocation, item])
 
   const handleShare = async () => {
     if (navigator.share) {
@@ -245,7 +264,10 @@ export default function DestinationDetail() {
                     <div className="text-xs text-slate-500 mb-3">
                       {item.coordinates.lat.toFixed(4)}°N, {item.coordinates.lng.toFixed(4)}°E
                       <div className="mt-1 text-teal-600 font-medium">
-                        {item.name} in {distanceFromColombo(item)} km from Colombo
+                        {roadDistanceKm != null
+                          ? `${item.name} in ${roadDistanceKm} km from you`
+                          : `${item.name} in ${distanceFromColombo(item)} km from Colombo`
+                        }
                       </div>
                     </div>
                     <a

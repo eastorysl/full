@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { FiMapPin, FiCrosshair, FiNavigation, FiSun, FiClock, FiDollarSign, FiAward } from 'react-icons/fi'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -7,6 +7,7 @@ import Badge from '../ui/Badge'
 import { destinations } from '../../data/destinations'
 import { handleImgError } from '../../utils/fallback'
 import { fetchRoute, haversineDistance } from '../../services/routingService'
+import useGeolocation from '../../hooks/useGeolocation'
 
 function formatRoadDistance(meters) {
   if (!meters && meters !== 0) return ''
@@ -151,41 +152,7 @@ function NearestCard({ dest, i, distance }) {
 
 export default function NearestPlaces() {
   const [nearestPlaces, setNearestPlaces] = useState([])
-  const [userLocation, setUserLocation] = useState(null)
-  const [locating, setLocating] = useState(false)
-  const [locateError, setLocateError] = useState(null)
-  const hasLocated = useRef(false)
-
-  const fetchLocation = useCallback(() => {
-    if (!navigator.geolocation) {
-      setLocateError('Geolocation not supported')
-      return
-    }
-    setLocating(true)
-    setLocateError(null)
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude })
-        setLocating(false)
-      },
-      (err) => {
-        setLocating(false)
-        setLocateError(
-          err.code === 1 ? 'Location access denied'
-          : err.code === 2 ? 'Location unavailable'
-          : 'Location timed out'
-        )
-      },
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
-    )
-  }, [])
-
-  useEffect(() => {
-    if (!hasLocated.current) {
-      hasLocated.current = true
-      fetchLocation()
-    }
-  }, [fetchLocation])
+  const { location: userLocation, loading: locating, error: locateError, refetch } = useGeolocation()
 
   useEffect(() => {
     if (!userLocation) return
@@ -265,7 +232,7 @@ export default function NearestPlaces() {
           <div className="text-center py-10">
             <p className="text-slate-500 text-sm mb-3">{locateError}</p>
             <button
-              onClick={fetchLocation}
+              onClick={refetch}
               className="inline-flex items-center gap-2 px-5 py-2.5 min-h-[44px] rounded-xl bg-teal-50 text-teal-700 text-sm font-semibold hover:bg-teal-100 transition-colors duration-200"
             >
               <FiCrosshair className="text-sm" />

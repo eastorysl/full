@@ -19,6 +19,7 @@ import { presetTrips } from '../data/presetTrips'
 import NavigationMode from '../components/map/NavigationMode'
 import DraggableBottomSheet from '../components/map/DraggableBottomSheet'
 import useRoutePlanner from '../hooks/useRoutePlanner'
+import useGeolocation from '../hooks/useGeolocation'
 
 import { destinations } from '../data/destinations'
 import { businesses } from '../data/businesses'
@@ -199,6 +200,7 @@ export default function Map() {
   const mapInstanceRef = useRef(null)
 
   const rp = useRoutePlanner(ALL_DATA)
+  const { location: sharedLocation } = useGeolocation()
 
   const shuffledAllData = useMemo(() => shuffle(ALL_DATA), [])
 
@@ -336,19 +338,41 @@ export default function Map() {
     if (hasAutoLoadedTrip.current) return
     const tripParam = searchParams.get('trip')
     if (!tripParam) return
-    hasAutoLoadedTrip.current = true
     const ids = tripParam.split(',').map(s => s.trim()).filter(Boolean)
-    if (ids.length >= 2) {
-      rp.loadStopsByIds(ids, ALL_DATA)
-      setSidebarTab('planner')
-      setShowList(true)
-      setSheetSnap(1)
-      const presetStops = ids.map(id => ALL_DATA.find(d => d.id === id)).filter(Boolean)
-      if (presetStops.length >= 2) {
-        rp.generateRoute(presetStops)
+    if (ids.length < 2) return
+
+    const hasCurrentLocation = ids.includes('__current_location')
+    const resolvedLocation = hasCurrentLocation ? (sharedLocation || userLocation) : null
+    if (hasCurrentLocation && !resolvedLocation) return
+
+    hasAutoLoadedTrip.current = true
+
+    const resolveStop = (id) => {
+      if (id === '__current_location') {
+        if (!resolvedLocation) return null
+        return {
+          id: '__current_location',
+          name: 'My Current Location',
+          location: 'Current Position',
+          category: 'current-location',
+          coordinates: { lat: resolvedLocation[0] ?? resolvedLocation.lat, lng: resolvedLocation[1] ?? resolvedLocation.lng },
+        }
       }
+      return ALL_DATA.find(d => d.id === id) || null
     }
-  }, [searchParams]) // eslint-disable-line
+
+    const resolvedStops = ids.map(resolveStop).filter(Boolean)
+    if (resolvedStops.length < 2) return
+
+    rp.loadStopsByIds(ids.filter(id => id !== '__current_location'), ALL_DATA)
+    if (resolvedStops.some(s => s.id === '__current_location')) {
+      rp.addStop(resolvedStops.find(s => s.id === '__current_location'))
+    }
+    setSidebarTab('planner')
+    setShowList(true)
+    setSheetSnap(1)
+    rp.generateRoute(resolvedStops)
+  }, [searchParams, sharedLocation, userLocation]) // eslint-disable-line
 
   const handleLocate = useCallback(() => {
     fetchLocation(true)

@@ -2,7 +2,7 @@
 
 > Tourism, culture, and local business discovery platform for Sri Lanka — built with React, featuring an interactive map, PWA support, and rich content pages.
 
-![Version](https://img.shields.io/badge/version-1.0.1-0f766e?style=flat-square)
+![Version](https://img.shields.io/badge/version-1.1.0-0f766e?style=flat-square)
 ![React](https://img.shields.io/badge/React_19-61DAFB?style=flat-square&logo=react)
 ![Tailwind](https://img.shields.io/badge/Tailwind_CSS_3-06B6D4?style=flat-square&logo=tailwind-css)
 ![Vite](https://img.shields.io/badge/Vite_8-646CFF?style=flat-square&logo=vite)
@@ -79,7 +79,7 @@ eastory-sri-lanka-hub/
 │   │   ├── presetTrips.js    # 12 curated road trip routes
 │   │   ├── gallery.js        # Gallery images + categories
 │   │   └── schema.js         # Admin data schema reference
-│   ├── hooks/                # useInView, usePWAInstall, usePageTracking, useRoutePlanner
+│   ├── hooks/                # useInView, usePWAInstall, usePageTracking, useRoutePlanner, useGeolocation
 │   ├── services/             # routingService (OSRM multi-mirror failover, share URL)
 │   ├── utils/                # distance.js, fallback.js, season.js, mapHelpers.js, analytics.js, routeOptimizer.js
 │   └── App.jsx               # Root with BrowserRouter + Routes + lazy loading
@@ -128,8 +128,8 @@ Defined in `src/App.jsx`. All routes are nested under `<Layout />` (Navbar + Foo
 |-----------|---------|
 | `Hero` | Full-screen hero with title, subtitle, CTA buttons |
 | `Featured` | Shows nearest places (OSRM road distance) + seasonal destinations and food for current month with category filters |
-| `NearestBusinesses` | Shows 4 closest businesses based on geolocation with distance, call, map, and directions buttons |
-| `TripFinder` | Interactive 5-question quiz with 6 geographically-clustered destination cards |
+| `NearestBusinesses` | Shows 4 closest businesses based on geolocation with OSRM road distance, call, map, and directions buttons |
+| `TripFinder` | Interactive start/end route planner with **auto-detected current location** as default start point. Generates route on map |
 | `CTA` | Call-to-action card linking to `/sri-lanka-pride` |
 | `AboutSriLanka` | 3 glassmorphism cards (Natural Paradise, Wildlife, Culture) |
 | `GovTourismLinks` | Government resource links |
@@ -841,6 +841,13 @@ The `netlify.toml` handles:
 - **BusinessCard action buttons** — Changed from `flex-wrap` to `flex-nowrap overflow-x-auto no-scrollbar` to prevent 2-line wrapping on mobile
 - **RouteSummary share dropdown** — Reordered classes to `top-full mt-1 right-0` so dropdown opens downward. When no Optimize button (≤2 stops), wrapper gets `flex-1` and button gets `w-full` so dropdown stays within bounds
 - **NearbyPlaces stop filtering** — Added `stops` prop, builds `stopIds` Set, filters out places already added as stops from `availablePlaces`. All 4 `<NearbyPlaces>` usages now pass `stops` (Map, MapSidePanel, RoadTripPlanner mobile + desktop)
+
+### v1.1.0 — Current Location & Personalized Distances
+- **Shared `useGeolocation` hook** — Created `src/hooks/useGeolocation.js` with module-level singleton pattern. Multiple components share the same geolocation result without duplicate browser prompts. Used by NearestPlaces, NearestBusinesses, TripFinder, DestinationDetail, PrideDetail, and Map page
+- **TripFinder current location** — Start point auto-selects "My Current Location" when GPS is available. Users can also manually select it from the start point dropdown. Navigates to map with `__current_location` ID
+- **Map page `__current_location` handling** — When `?trip=__current_location,endId` is loaded, resolves the synthetic stop using shared geolocation. Waits for GPS before processing if needed
+- **Detail pages "X km from you"** — `DestinationDetail` and `PrideDetail` now calculate OSRM road distance from user's current location and display "X km from you". Falls back to "X km from Colombo" when geolocation is unavailable
+- **NearestPlaces/NearestBusinesses deduplication** — Both components now use the shared `useGeolocation` hook instead of making independent geolocation requests
 
 ### DraggableBottomSheet Fixes
 - **CRITICAL: Velocity direction inverted** — `snapToNearest` had reversed flick logic: flicking DOWN (positive velocity) snapped toward Full instead of Peek. Fixed `++`/`--` so down = lower index, up = higher index
