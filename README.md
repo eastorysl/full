@@ -2,7 +2,7 @@
 
 > Tourism, culture, and local business discovery platform for Sri Lanka — built with React, featuring an interactive map, PWA support, and rich content pages.
 
-![Version](https://img.shields.io/badge/version-1.1.0-0f766e?style=flat-square)
+![Version](https://img.shields.io/badge/version-1.1.1-0f766e?style=flat-square)
 ![React](https://img.shields.io/badge/React_19-61DAFB?style=flat-square&logo=react)
 ![Tailwind](https://img.shields.io/badge/Tailwind_CSS_3-06B6D4?style=flat-square&logo=tailwind-css)
 ![Vite](https://img.shields.io/badge/Vite_8-646CFF?style=flat-square&logo=vite)
@@ -841,6 +841,13 @@ The `netlify.toml` handles:
 - **BusinessCard action buttons** — Changed from `flex-wrap` to `flex-nowrap overflow-x-auto no-scrollbar` to prevent 2-line wrapping on mobile
 - **RouteSummary share dropdown** — Reordered classes to `top-full mt-1 right-0` so dropdown opens downward. When no Optimize button (≤2 stops), wrapper gets `flex-1` and button gets `w-full` so dropdown stays within bounds
 - **NearbyPlaces stop filtering** — Added `stops` prop, builds `stopIds` Set, filters out places already added as stops from `availablePlaces`. All 4 `<NearbyPlaces>` usages now pass `stops` (Map, MapSidePanel, RoadTripPlanner mobile + desktop)
+
+### v1.1.1 — Geolocation Fallback & Search UX
+- **NearestPlaces random fallback** — When geolocation is unavailable (denied, error, or timeout), shows 3 random places instead of error/"Try Again" block. Heading changes to "Popular Places to Visit" (was "Popular Places Near You")
+- **NearestBusinesses random fallback** — Shows random `featured`/`premium` tier businesses when no location. Heading changes to "Hotels & Attractions to Visit" (was "Popular Places to Visit"). Removed error block entirely
+- **TripFinder start point UX** — Start point auto-fills "My Current Location" via `useRef` flag to prevent re-trigger loop. `onFocusClear` clears input on focus so user can type. Added `useEffect` to reset `selected` state when value empties, ensuring dropdown reappears
+- **PlaceSearch dropdown fix** — Removed `overflow-hidden` from search sections that blocked dropdown visibility. Added `useEffect` to reset `selected` state when value becomes empty. Shows random suggested places when input is empty/focused
+- **Home.jsx section restoration** — TripFinder section restored after accidental removal
 
 ### v1.1.0 — Current Location & Personalized Distances
 - **Shared `useGeolocation` hook** — Created `src/hooks/useGeolocation.js` with module-level singleton pattern. Multiple components share the same geolocation result without duplicate browser prompts. Used by NearestPlaces, NearestBusinesses, TripFinder, DestinationDetail, PrideDetail, and Map page

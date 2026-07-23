@@ -91,10 +91,15 @@ function NearbyCard({ business, index, distance }) {
 
 export default function NearestBusinesses() {
   const [nearestBusinesses, setNearestBusinesses] = useState([])
-  const { location: userLocation, loading: locating, error: locateError, refetch } = useGeolocation()
+  const { location: userLocation, loading: locating } = useGeolocation()
 
   useEffect(() => {
-    if (!userLocation) return
+    if (!userLocation) {
+      const tiered = businesses.filter((b) => b.tier && b.tier !== 'standard')
+      const shuffled = [...tiered].sort(() => Math.random() - 0.5).slice(0, 4)
+      setNearestBusinesses(shuffled)
+      return
+    }
     let cancelled = false
 
     async function loadRoadDistances() {
@@ -132,6 +137,8 @@ export default function NearestBusinesses() {
     return () => { cancelled = true }
   }, [userLocation])
 
+  const hasLocation = !!userLocation
+
   return (
     <section className="section-padding relative overflow-hidden bg-gradient-to-b from-white via-slate-50/50 to-white">
       <div className="absolute inset-0 opacity-[0.03]"
@@ -143,9 +150,9 @@ export default function NearestBusinesses() {
 
       <div className="container-custom relative z-10">
         <SectionTitle
-          subtitle="Closest to You"
-          title="Popular Near You"
-          description="Top-rated hotels, tours, and services just around the corner."
+          subtitle={hasLocation ? "Near You" : "Top Picks"}
+          title={hasLocation ? "Hotels & Attractions Near You" : "Best Hotels & Attractions to Visit"}
+          description={hasLocation ? "Top-rated hotels, tours, and services just around the corner." : "Handpicked hotels, tours, and services you'll love."}
         />
 
         {nearestBusinesses.length === 0 && locating && (
@@ -154,19 +161,6 @@ export default function NearestBusinesses() {
               <span className="w-5 h-5 border-2 border-teal-500 border-t-transparent rounded-full animate-spin" />
               Finding businesses near you...
             </div>
-          </div>
-        )}
-
-        {nearestBusinesses.length === 0 && locateError && (
-          <div className="text-center py-10">
-            <p className="text-slate-500 text-sm mb-3">{locateError}</p>
-            <button
-              onClick={refetch}
-              className="inline-flex items-center gap-2 px-5 py-2.5 min-h-[44px] rounded-xl bg-teal-50 text-teal-700 text-sm font-semibold hover:bg-teal-100 transition-colors duration-200"
-            >
-              <FiCrosshair className="text-sm" />
-              Try Again
-            </button>
           </div>
         )}
 

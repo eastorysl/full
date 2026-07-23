@@ -152,10 +152,14 @@ function NearestCard({ dest, i, distance }) {
 
 export default function NearestPlaces() {
   const [nearestPlaces, setNearestPlaces] = useState([])
-  const { location: userLocation, loading: locating, error: locateError, refetch } = useGeolocation()
+  const { location: userLocation, loading: locating } = useGeolocation()
 
   useEffect(() => {
-    if (!userLocation) return
+    if (!userLocation) {
+      const shuffled = [...destinations].sort(() => Math.random() - 0.5).slice(0, 3)
+      setNearestPlaces(shuffled)
+      return
+    }
     let cancelled = false
 
     async function loadRoadDistances() {
@@ -193,6 +197,8 @@ export default function NearestPlaces() {
     return () => { cancelled = true }
   }, [userLocation])
 
+  const hasLocation = !!userLocation
+
   return (
     <section className="section-padding relative overflow-hidden bg-gradient-to-b from-slate-50 via-white to-slate-50/50">
       <div className="absolute inset-0 opacity-[0.03]"
@@ -204,9 +210,9 @@ export default function NearestPlaces() {
 
       <div className="container-custom relative z-10">
         <SectionTitle
-          subtitle="Near You"
-          title="Nearest Places to Visit"
-          description="Closest destinations based on your current location."
+          subtitle={hasLocation ? "Near You" : "Explore"}
+          title={hasLocation ? "Popular Places Near You" : "Popular Places to Visit"}
+          description={hasLocation ? "Closest destinations based on your current location." : "Handpicked destinations you might love."}
         />
 
         {nearestPlaces.length > 0 && (
@@ -228,18 +234,6 @@ export default function NearestPlaces() {
           </div>
         )}
 
-        {nearestPlaces.length === 0 && locateError && (
-          <div className="text-center py-10">
-            <p className="text-slate-500 text-sm mb-3">{locateError}</p>
-            <button
-              onClick={refetch}
-              className="inline-flex items-center gap-2 px-5 py-2.5 min-h-[44px] rounded-xl bg-teal-50 text-teal-700 text-sm font-semibold hover:bg-teal-100 transition-colors duration-200"
-            >
-              <FiCrosshair className="text-sm" />
-              Try Again
-            </button>
-          </div>
-        )}
       </div>
     </section>
   )

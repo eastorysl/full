@@ -20,7 +20,7 @@ const CURRENT_LOCATION_ITEM = {
   coordinates: null,
 }
 
-function PlaceSearch({ value, onChange, placeholder, onSelect, showCurrentLocation, currentLocation }) {
+function PlaceSearch({ value, onChange, placeholder, onSelect, showCurrentLocation, currentLocation, onFocusClear }) {
   const [focused, setFocused] = useState(false)
   const [selected, setSelected] = useState(false)
   const timeoutRef = useRef(null)
@@ -29,15 +29,24 @@ function PlaceSearch({ value, onChange, placeholder, onSelect, showCurrentLocati
     return () => { if (timeoutRef.current) clearTimeout(timeoutRef.current) }
   }, [])
 
+  useEffect(() => {
+    if (!value) setSelected(false)
+  }, [value])
+
   const results = useMemo(() => {
     if (selected) return []
     const items = []
 
-    if (showCurrentLocation && currentLocation && (!value || value.length < 2)) {
-      items.push({ ...CURRENT_LOCATION_ITEM, coordinates: currentLocation })
-    }
-
-    if (value && value.length >= 2) {
+    if (!value || value.length < 2) {
+      if (showCurrentLocation && currentLocation) {
+        items.push({ ...CURRENT_LOCATION_ITEM, coordinates: currentLocation })
+      }
+      const suggestions = ALL_DATA
+        .filter((d) => d.coordinates)
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 5)
+      items.push(...suggestions)
+    } else {
       const q = value.toLowerCase()
       const matches = ALL_DATA
         .filter((d) =>
@@ -70,7 +79,7 @@ function PlaceSearch({ value, onChange, placeholder, onSelect, showCurrentLocati
           type="text"
           value={value}
           onChange={(e) => handleChange(e.target.value)}
-          onFocus={() => setFocused(true)}
+          onFocus={() => { setFocused(true); if (onFocusClear) onFocusClear() }}
           onBlur={() => { timeoutRef.current = setTimeout(() => setFocused(false), 200) }}
           aria-label="Search start point"
           placeholder={placeholder}
@@ -121,14 +130,16 @@ export default function TripFinder() {
   const [endVal, setEndVal] = useState('')
   const [startSelected, setStartSelected] = useState(null)
   const [endSelected, setEndSelected] = useState(null)
+  const autoSelectedRef = useRef(false)
 
   useEffect(() => {
-    if (userLocation && !startSelected) {
+    if (userLocation && !autoSelectedRef.current) {
+      autoSelectedRef.current = true
       const autoStart = { ...CURRENT_LOCATION_ITEM, coordinates: userLocation }
       setStartSelected(autoStart)
       setStartVal('My Current Location')
     }
-  }, [userLocation, startSelected])
+  }, [userLocation])
 
   function handleSelectStart(item) {
     setStartSelected(item)
@@ -147,7 +158,7 @@ export default function TripFinder() {
   }
 
   return (
-    <section className="section-padding bg-white relative overflow-hidden">
+    <section className="section-padding bg-white relative">
       <div className="absolute inset-0 opacity-[0.03]"
         style={{
           backgroundImage: 'radial-gradient(circle at 30% 50%, #0d9488 0%, transparent 50%), radial-gradient(circle at 70% 50%, #0284c7 0%, transparent 50%)',
@@ -174,6 +185,7 @@ export default function TripFinder() {
               onSelect={handleSelectStart}
               showCurrentLocation
               currentLocation={userLocation}
+              onFocusClear={() => { setStartVal(''); setStartSelected(null) }}
             />
             <div className="flex items-center justify-center">
               <div className="w-0.5 h-6 bg-gradient-to-b from-teal-400 to-ocean-500 rounded-full" />
