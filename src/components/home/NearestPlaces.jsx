@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { FiMapPin, FiCrosshair, FiNavigation, FiSun, FiClock, FiDollarSign, FiAward } from 'react-icons/fi'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -6,21 +6,13 @@ import SectionTitle from '../ui/SectionTitle'
 import Badge from '../ui/Badge'
 import { destinations } from '../../data/destinations'
 import { handleImgError } from '../../utils/fallback'
+import { fetchRoute, haversineDistance } from '../../services/routingService'
 
-function haversineDistance(lat1, lng1, lat2, lng2) {
-  const R = 6371
-  const dLat = ((lat2 - lat1) * Math.PI) / 180
-  const dLng = ((lng2 - lng1) * Math.PI) / 180
-  const a =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLng / 2) ** 2
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
-}
-
-function formatDistance(km) {
-  if (km < 1) return `${Math.round(km * 1000)} m`
-  if (km < 10) return `${km.toFixed(1)} km`
-  return `${Math.round(km)} km`
+function formatRoadDistance(meters) {
+  if (!meters && meters !== 0) return ''
+  if (meters < 1000) return `${Math.round(meters)} m`
+  if (meters < 10000) return `${(meters / 1000).toFixed(1)} km`
+  return `${Math.round(meters / 1000)} km`
 }
 
 const catEmoji = {
@@ -113,7 +105,7 @@ function NearestCard({ dest, i, distance }) {
             {distance != null && (
               <span className="flex items-center gap-1 text-teal-600 font-semibold">
                 <FiCrosshair className="text-[10px]" />
-                {formatDistance(distance)} away
+                {formatRoadDistance(distance)} away
               </span>
             )}
           </div>
@@ -158,6 +150,7 @@ function NearestCard({ dest, i, distance }) {
 }
 
 export default function NearestPlaces() {
+  const [nearestPlaces, setNearestPlaces] = useState([])
   const [userLocation, setUserLocation] = useState(null)
   const [locating, setLocating] = useState(false)
   const [locateError, setLocateError] = useState(null)
@@ -194,16 +187,43 @@ export default function NearestPlaces() {
     }
   }, [fetchLocation])
 
-  const nearestPlaces = useMemo(() => {
-    if (!userLocation) return []
-    const withDist = destinations
-      .filter((d) => d.coordinates)
-      .map((d) => ({
-        ...d,
-        distance: haversineDistance(userLocation.lat, userLocation.lng, d.coordinates.lat, d.coordinates.lng),
-      }))
-    withDist.sort((a, b) => a.distance - b.distance)
-    return withDist.slice(0, 3)
+  useEffect(() => {
+    if (!userLocation) return
+    let cancelled = false
+
+    async function loadRoadDistances() {
+      const candidates = destinations
+        .filter((d) => d.coordinates)
+        .map((d) => ({
+          ...d,
+          _haversine: haversineDistance(userLocation.lat, userLocation.lng, d.coordinates.lat, d.coordinates.lng),
+        }))
+        .sort((a, b) => a._haversine - b._haversine)
+        .slice(0, 10)
+
+      const results = await Promise.allSettled(
+        candidates.map(async (d) => {
+          const route = await fetchRoute([
+            [userLocation.lat, userLocation.lng],
+            [d.coordinates.lat, d.coordinates.lng],
+          ])
+          return { ...d, distance: route ? route.distance : d._haversine * 1000 }
+        })
+      )
+
+      if (cancelled) return
+
+      const places = results
+        .filter((r) => r.status === 'fulfilled')
+        .map((r) => r.value)
+        .sort((a, b) => a.distance - b.distance)
+        .slice(0, 3)
+
+      setNearestPlaces(places)
+    }
+
+    loadRoadDistances()
+    return () => { cancelled = true }
   }, [userLocation])
 
   return (

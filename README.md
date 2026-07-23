@@ -2,7 +2,7 @@
 
 > Tourism, culture, and local business discovery platform for Sri Lanka — built with React, featuring an interactive map, PWA support, and rich content pages.
 
-![Version](https://img.shields.io/badge/version-1.0.0-0f766e?style=flat-square)
+![Version](https://img.shields.io/badge/version-1.0.1-0f766e?style=flat-square)
 ![React](https://img.shields.io/badge/React_19-61DAFB?style=flat-square&logo=react)
 ![Tailwind](https://img.shields.io/badge/Tailwind_CSS_3-06B6D4?style=flat-square&logo=tailwind-css)
 ![Vite](https://img.shields.io/badge/Vite_8-646CFF?style=flat-square&logo=vite)
@@ -127,7 +127,7 @@ Defined in `src/App.jsx`. All routes are nested under `<Layout />` (Navbar + Foo
 | Component | Purpose |
 |-----------|---------|
 | `Hero` | Full-screen hero with title, subtitle, CTA buttons |
-| `Featured` | Shows nearest places + seasonal destinations and food for current month with category filters |
+| `Featured` | Shows nearest places (OSRM road distance) + seasonal destinations and food for current month with category filters |
 | `NearestBusinesses` | Shows 4 closest businesses based on geolocation with distance, call, map, and directions buttons |
 | `TripFinder` | Interactive 5-question quiz with 6 geographically-clustered destination cards |
 | `CTA` | Call-to-action card linking to `/sri-lanka-pride` |
@@ -362,10 +362,11 @@ Use this file as a quick reference when adding new entries to any data file.
 
 ### NearestBusinesses (Home page)
 - Requests browser geolocation to find user's current location
-- Calculates Haversine distance to all businesses with coordinates
-- Shows 4 nearest businesses in a responsive card grid (1 col mobile, 2 sm, 4 lg)
-- Each card: distance badge, image, name, location, subcategory badge, Call/Map/Directions buttons
+- Pre-filters top 12 nearest by haversine, then fetches actual OSRM road distances
+- Shows 4 nearest businesses by road distance in a responsive card grid (1 col mobile, 2 sm, 4 lg)
+- Each card: road distance badge, image, name, location, subcategory badge, Call/Map/Directions buttons
 - Loading spinner, error with retry button, and "Discover More" CTA link
+- Falls back to haversine × 1000 if OSRM fails
 
 ### Map
 - Full-screen Leaflet map with clustered markers
@@ -393,7 +394,7 @@ Use this file as a quick reference when adding new entries to any data file.
 - Animated route polyline with fallback dashed line on failure
 - Auto-zoom to fit route bounds
 - Route summary with distance, duration, and day count
-- **TripPlannerPanel**: Plan/Presets sub-tabs, SearchInput with 48px touch targets, NearbyPlaces
+- **TripPlannerPanel**: Plan/Presets sub-tabs, SearchInput with 48px touch targets, NearbyPlaces (filters out already-added stops)
 - Mobile: content renders inside DraggableBottomSheet; Desktop: sidebar planner panel
 
 ### PWA
@@ -832,6 +833,14 @@ The `netlify.toml` handles:
 - **DestinationDetail & MapPlaceList** — badges and sorting now use `getEffectiveTier()` instead of raw `item.tier`
 - **Sitemap generator updated** — now includes all 6 legal pages (was missing privacy-policy, terms-of-service, business-terms, cookie-policy, disclaimer, unsubscribe)
 - **OG page generator updated** — now generates OG pages for all 6 legal pages
+
+### v1.0.1 — Road Distance & UI Fixes
+- **NearestPlaces road distance** — Pre-filters top 10 by haversine, then fetches actual OSRM road distances via `fetchRoute`, sorts by road distance, shows top 3. Falls back to haversine × 1000 if OSRM fails
+- **NearestBusinesses road distance** — Same approach: pre-filters top 12, fetches road distances, shows top 4 by road distance
+- **BusinessCard website button** — Changed from pill with text to icon-only circle (`w-[44px] h-[44px]`) with `aria-label="Website"` for accessibility
+- **BusinessCard action buttons** — Changed from `flex-wrap` to `flex-nowrap overflow-x-auto no-scrollbar` to prevent 2-line wrapping on mobile
+- **RouteSummary share dropdown** — Reordered classes to `top-full mt-1 right-0` so dropdown opens downward. When no Optimize button (≤2 stops), wrapper gets `flex-1` and button gets `w-full` so dropdown stays within bounds
+- **NearbyPlaces stop filtering** — Added `stops` prop, builds `stopIds` Set, filters out places already added as stops from `availablePlaces`. All 4 `<NearbyPlaces>` usages now pass `stops` (Map, MapSidePanel, RoadTripPlanner mobile + desktop)
 
 ### DraggableBottomSheet Fixes
 - **CRITICAL: Velocity direction inverted** — `snapToNearest` had reversed flick logic: flicking DOWN (positive velocity) snapped toward Full instead of Peek. Fixed `++`/`--` so down = lower index, up = higher index

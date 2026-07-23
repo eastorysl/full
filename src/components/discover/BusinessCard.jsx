@@ -78,7 +78,7 @@ export default function BusinessCard({ business, index }) {
           )}
 
         </div>
-        <div className="flex flex-wrap gap-2 pt-3 border-t border-slate-100">
+        <div className="flex flex-nowrap gap-2 pt-3 border-t border-slate-100 overflow-x-auto no-scrollbar">
           {business.phone && (
             <a
               href={`tel:${business.phone}`}
@@ -93,10 +93,10 @@ export default function BusinessCard({ business, index }) {
               href={business.website}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-4 min-h-[44px] rounded-full bg-slate-100 text-slate-700 text-xs font-semibold shadow-sm hover:bg-slate-200 hover:shadow-md transition-all duration-300"
+              className="inline-flex items-center justify-center w-[44px] h-[44px] rounded-full bg-slate-100 text-slate-700 shadow-sm hover:bg-slate-200 hover:shadow-md transition-all duration-300"
+              aria-label="Website"
             >
-              <FiGlobe className="text-xs" />
-              Website
+              <FiGlobe />
             </a>
           )}
           {business.social?.facebook && (

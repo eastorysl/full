@@ -221,6 +221,7 @@ const RoadTripPlannerDesktop = forwardRef(function RoadTripPlannerDesktop({
                 {nearbyPlaces.length > 0 && (
                   <NearbyPlaces
                     places={nearbyPlaces}
+                    stops={stops}
                     onSelectPlace={onSelectPlaceOnMap}
                     onAddToRoute={onAddNearbyToRoute}
                   />
@@ -387,6 +388,7 @@ const RoadTripPlannerMobile = forwardRef(function RoadTripPlannerMobile({
                   {nearbyPlaces.length > 0 && (
                     <NearbyPlaces
                       places={nearbyPlaces}
+                      stops={stops}
                       onSelectPlace={onSelectPlaceOnMap}
                       onAddToRoute={onAddNearbyToRoute}
                     />

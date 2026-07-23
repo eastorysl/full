@@ -152,6 +152,7 @@ function TripPlannerPanel({
             {nearbyPlaces.length > 0 && (
               <NearbyPlaces
                 places={nearbyPlaces}
+                stops={stops}
                 onSelectPlace={onSelectPlaceOnMap}
                 onAddToRoute={onAddNearbyToRoute}
                 isExpanded={nearbyExpanded}

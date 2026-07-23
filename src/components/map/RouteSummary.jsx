@@ -188,10 +188,10 @@ export default function RouteSummary({ formattedDistance, formattedDuration, sto
             {statusLabel}
           </div>
         ) : (
-          <div className="relative" ref={menuRef}>
+          <div className={`relative ${!(stops && stops.length > 2) ? 'flex-1' : ''}`} ref={menuRef}>
             <button
               onClick={() => setMenuOpen(!menuOpen)}
-              className="flex items-center justify-center gap-1.5 px-3 py-2 min-h-[44px] rounded-lg bg-white border border-slate-200 text-slate-500 text-xs font-semibold hover:bg-slate-50 hover:border-slate-300 transition-all duration-200"
+              className="w-full flex items-center justify-center gap-1.5 px-3 py-2 min-h-[44px] rounded-lg bg-white border border-slate-200 text-slate-500 text-xs font-semibold hover:bg-slate-50 hover:border-slate-300 transition-all duration-200"
               title="Share route"
             >
               <FiShare2 className="text-[10px]" />
@@ -200,7 +200,7 @@ export default function RouteSummary({ formattedDistance, formattedDuration, sto
             </button>
 
             {menuOpen && (
-              <div className="absolute right-0 top-full mt-1 w-52 bg-white rounded-xl border border-slate-200 shadow-lg z-50 overflow-hidden">
+              <div className="absolute top-full mt-1 right-0 w-52 max-w-[calc(100vw-2rem)] bg-white rounded-xl border border-slate-200 shadow-lg z-50 overflow-hidden">
                 <button
                   onClick={handleSend}
                   className="w-full flex items-center gap-3 px-3 py-2.5 min-h-[44px] text-left text-xs font-medium text-slate-700 hover:bg-teal-50 hover:text-teal-700 transition-colors"

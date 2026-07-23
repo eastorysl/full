@@ -20,25 +20,34 @@ function formatDist(meters) {
   return `${(meters / 1000).toFixed(1)} km`
 }
 
-export default function NearbyPlaces({ places, onSelectPlace, onAddToRoute, isExpanded: externalExpanded, onToggleExpand }) {
+export default function NearbyPlaces({ places, stops, onSelectPlace, onAddToRoute, isExpanded: externalExpanded, onToggleExpand }) {
   const [internalExpanded, setInternalExpanded] = useState(false)
   const isExpanded = externalExpanded !== undefined ? externalExpanded : internalExpanded
   const toggleExpand = onToggleExpand ? () => onToggleExpand(prev => !prev) : () => setInternalExpanded(prev => !prev)
   const [activeFilter, setActiveFilter] = useState('All')
 
+  const stopIds = useMemo(() => {
+    if (!stops || stops.length === 0) return new Set()
+    return new Set(stops.map(s => s.id))
+  }, [stops])
+
+  const availablePlaces = useMemo(() => {
+    if (!places) return []
+    return places.filter(p => !stopIds.has(p.id))
+  }, [places, stopIds])
+
   const categories = useMemo(() => {
-    if (!places || places.length === 0) return []
-    const cats = new Set(places.map(p => p.category).filter(Boolean))
+    if (availablePlaces.length === 0) return []
+    const cats = new Set(availablePlaces.map(p => p.category).filter(Boolean))
     return ['All', ...Array.from(cats)]
-  }, [places])
+  }, [availablePlaces])
 
   const filtered = useMemo(() => {
-    if (!places) return []
-    if (activeFilter === 'All') return places.slice(0, 12)
-    return places.filter(p => p.category === activeFilter).slice(0, 12)
-  }, [places, activeFilter])
+    if (activeFilter === 'All') return availablePlaces.slice(0, 12)
+    return availablePlaces.filter(p => p.category === activeFilter).slice(0, 12)
+  }, [availablePlaces, activeFilter])
 
-  if (!places || places.length === 0) return null
+  if (!places || places.length === 0 || availablePlaces.length === 0) return null
 
   return (
     <div className="bg-white rounded-xl border border-slate-100 overflow-hidden">
@@ -50,7 +59,7 @@ export default function NearbyPlaces({ places, onSelectPlace, onAddToRoute, isEx
           <div className="flex items-center gap-2">
             <span className="text-sm">🔍</span>
             <span className="text-sm font-semibold text-slate-700">Nearby Attractions</span>
-            <span className="text-[10px] bg-teal-100 text-teal-700 px-1.5 py-0.5 rounded-full font-bold">{places.length}</span>
+            <span className="text-[10px] bg-teal-100 text-teal-700 px-1.5 py-0.5 rounded-full font-bold">{availablePlaces.length}</span>
           </div>
           {isExpanded ? (
             <FiChevronUp className="text-slate-400" />
