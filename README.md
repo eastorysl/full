@@ -74,7 +74,7 @@ eastory-sri-lanka-hub/
 │   ├── pages/                # Route-level page components
 │   ├── data/                 # Static content modules (the "database")
 │   │   ├── destinations.js   # 123 destination entries
-│   │   ├── sriLankaPride.js  # 111 pride items
+│   │   ├── sriLankaPride.js  # 101 pride items
 │   │   ├── businesses.js     # 86 business entries
 │   │   ├── presetTrips.js    # 12 curated road trip routes
 │   │   ├── gallery.js        # Gallery images + categories
@@ -272,7 +272,7 @@ All content is static data in `src/data/`. To add new items, append objects to t
 
 ### sriLankaPride.js
 
-**Export:** `prideItems` (array — 111 entries)
+**Export:** `prideItems` (array — 101 entries)
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
@@ -294,7 +294,6 @@ All content is static data in `src/data/`. To add new items, append objects to t
 | `duration` | string | No | For road-trip-routes |
 | `seasonMonths` | string | No | For seasonal-foods |
 | `seasonName` | string | No | For seasonal-foods |
-| `regions` | string | No | For seasonal-foods |
 
 > **No duplicate entries with destinations.**
 
