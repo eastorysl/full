@@ -20,7 +20,7 @@ const CURRENT_LOCATION_ITEM = {
   coordinates: null,
 }
 
-function PlaceSearch({ value, onChange, placeholder, onSelect, showCurrentLocation, currentLocation, onFocusClear }) {
+function PlaceSearch({ value, onChange, placeholder, onSelect, showCurrentLocation, currentLocation, onFocusClear, maxResults = 20, fixedHeight = false, dropdownHeight, wrapperClassName = '' }) {
   const [focused, setFocused] = useState(false)
   const [selected, setSelected] = useState(false)
   const timeoutRef = useRef(null)
@@ -44,7 +44,7 @@ function PlaceSearch({ value, onChange, placeholder, onSelect, showCurrentLocati
       const suggestions = ALL_DATA
         .filter((d) => d.coordinates)
         .sort(() => Math.random() - 0.5)
-        .slice(0, 5)
+        .slice(0, maxResults)
       items.push(...suggestions)
     } else {
       const q = value.toLowerCase()
@@ -54,11 +54,11 @@ function PlaceSearch({ value, onChange, placeholder, onSelect, showCurrentLocati
           d.location?.toLowerCase().includes(q) ||
           d.district?.toLowerCase().includes(q)
         )
-        .slice(0, 6)
+        .slice(0, maxResults)
       items.push(...matches)
     }
 
-    return items.slice(0, 7)
+    return items.slice(0, maxResults)
   }, [value, selected, showCurrentLocation, currentLocation])
 
   function handleChange(v) {
@@ -72,7 +72,7 @@ function PlaceSearch({ value, onChange, placeholder, onSelect, showCurrentLocati
   }
 
   return (
-    <div className="relative rounded-xl focus-within:ring-2 focus-within:ring-teal-500/20 transition-all">
+    <div className={`relative rounded-xl focus-within:ring-2 focus-within:ring-teal-500/20 transition-all ${wrapperClassName}`}>
       <div className="flex items-center gap-2 bg-slate-50 rounded-xl px-3 py-2.5 focus-within:bg-white transition-all">
         <FiMapPin className="text-teal-500 text-sm shrink-0" />
         <input
@@ -92,7 +92,7 @@ function PlaceSearch({ value, onChange, placeholder, onSelect, showCurrentLocati
         )}
       </div>
       {focused && results.length > 0 && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-xl shadow-xl border border-slate-100 z-50 overflow-hidden max-h-56 overflow-y-auto">
+        <div className={`absolute top-full left-0 right-0 mt-1 bg-white rounded-xl shadow-xl border border-slate-100 z-50 overflow-hidden overflow-y-auto no-scrollbar ${fixedHeight ? (dropdownHeight || 'h-56') : 'max-h-56'}`}>
           {results.map((item) => {
             const isCurrentLocation = item.id === '__current_location'
             return (
@@ -186,6 +186,7 @@ export default function TripFinder() {
               showCurrentLocation
               currentLocation={userLocation}
               onFocusClear={() => { setStartVal(''); setStartSelected(null) }}
+              fixedHeight
             />
             <div className="flex items-center justify-center">
               <div className="w-0.5 h-6 bg-gradient-to-b from-teal-400 to-ocean-500 rounded-full" />
@@ -195,6 +196,9 @@ export default function TripFinder() {
               onChange={(v) => { setEndVal(v); setEndSelected(null) }}
               placeholder="End point..."
               onSelect={handleSelectEnd}
+              fixedHeight
+              dropdownHeight="h-[140px]"
+              wrapperClassName=""
             />
           </div>
 
